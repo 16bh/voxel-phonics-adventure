@@ -1,0 +1,15 @@
+{
+  "name": "voxel-phonics-adventure",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A single-file voxel learning game for English phonics and Hanyu Pinyin.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node scripts/check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
