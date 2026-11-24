@@ -48,5 +48,8 @@ if (!template.includes("wai:'ai'") || !template.includes("wei:'ei'")) {
 if (!template.includes("APP_MODE==='pinyin'?'?':ch")) {
   throw new Error('Pinyin questions must hide answer blocks before selection');
 }
+if (!template.includes('G.weapon=autoWeapon') || !template.includes('equipWeapon(autoWeapon.id)')) {
+  throw new Error('Road chest rewards must auto-equip a newly awarded weapon');
+}
 
 console.log(`Checks passed: ${scripts.length} scripts, ${chart.length} pinyin entries, no banned identifiers`);

@@ -2037,7 +2037,7 @@ var G={scr:'title',li:0,wi:0,pos:0,mistakes:0,posMiss:0,locked:true,paused:false
        word:'',character:'',gloss:'',emoji:'',tiles:[],monster:null,words:[],idleT:0,startT:0,levelMist:0,total:0,
        helpBack:'title',blocks:[],wordGrp:null,card:null,cardOffX:0,cardOffXT:0,wordW:0,mobKind:'',weapon:null,
        roundWords:null,tokens:[],tokenTypes:[],spoken:'',hp:3,threatT:0,attacking:false,
-       heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false};
+       heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false,canUseUnlocked:false};
 var HERO_ROUTE_START=-4.35,HERO_ROUTE_END=2.4,ROUTE_SPEED=3.2;
 var MON_TARGET_X=2.15,MON_ATTACK_X=-2.65,MON_Z=2.65,MON_SPAWN_X=9.0,MON_SPEED=6.2,ATTACK_AFTER=9;
 
@@ -2109,7 +2109,7 @@ function openIntro(i){
 function renderWeaponBar(){
   var box=$('#wbar');if(!box)return;
   box.innerHTML='';
-  var have=G.li===0?['wood']:unlockedWeapons();
+  var have=(G.li===0&&!G.canUseUnlocked)?['wood']:unlockedWeapons();
   WEAPONS.filter(function(w){return have.indexOf(w.id)>=0;}).forEach(function(w){
     var b=document.createElement('button');
     b.className='wslot';
@@ -2132,7 +2132,7 @@ function syncWeaponUI(){
 }
 function switchWeapon(id){
   var w=WMAP[id];
-  var have=G.li===0?['wood']:unlockedWeapons();
+  var have=(G.li===0&&!G.canUseUnlocked)?['wood']:unlockedWeapons();
   if(!w||!G.weapon||have.indexOf(id)<0||G.attacking)return;
   if(G.weapon.id===id){sfx('tap');return;}
   G.weapon=w;lastWeapon=id;
@@ -2174,7 +2174,7 @@ function startLevel(i,keepRound){
   G.roundWords=base;
   G.li=i;G.wi=0;G.mistakes=0;G.levelMist=0;G.paused=false;G.locked=true;G.done=false;
   G.hp=3;G.threatT=0;G.attacking=false;updateHealth();updateThreat();
-  G.heroTargetX=HERO_ROUTE_START;G.heroMoving=false;G.chest=null;G.chestAfterFinish=false;
+  G.heroTargetX=HERO_ROUTE_START;G.heroMoving=false;G.chest=null;G.chestAfterFinish=false;G.canUseUnlocked=false;
   if(hero){hero.userData.routeX=HERO_ROUTE_START;hero.position.x=HERO_ROUTE_START;}
   G.words=shuffleWords(base,i);
   G.total=G.words.length;
@@ -2582,8 +2582,12 @@ function claimRoadChest(){
   var chest=G.chest;if(!chest||!chest.userData.opening)return;
   chest.userData.lid.rotation.x=-.72;chest.userData.opened=true;sfx('win');
   var got=chestRewards();
+  var autoWeapon=got.items[0];
+  if(autoWeapon){
+    G.canUseUnlocked=true;G.weapon=autoWeapon;lastWeapon=autoWeapon.id;equipWeapon(autoWeapon.id);
+  }
   renderWeaponBar();
-  toast('good','宝箱获得：<b>'+got.items.map(function(w){return w.name;}).join('、')+'</b>');
+  toast('good','宝箱获得：<b>'+got.items.map(function(w){return w.name;}).join('、')+'</b>'+(autoWeapon?' · 已装备 '+autoWeapon.name:''));
   setTimeout(function(){
     if(G.chest){scene.remove(G.chest);G.chest=null;}
     G.chestAfterFinish?finishLevel():spawnWord();
