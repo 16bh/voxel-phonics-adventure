@@ -42,5 +42,11 @@ const findings = banned.flatMap((pattern) => {
 if (chart.length !== 411) throw new Error(`Expected 411 pinyin entries, got ${chart.length}`);
 if (output.includes('__PINYIN_CHART__')) throw new Error('Built file still contains a data placeholder');
 if (findings.length) throw new Error(`Sanitization check failed:\n${findings.join('\n')}`);
+if (!template.includes("wai:'ai'") || !template.includes("wei:'ei'")) {
+  throw new Error('Pinyin spelling overrides for wai/wei are missing');
+}
+if (!template.includes("APP_MODE==='pinyin'?'?':ch")) {
+  throw new Error('Pinyin questions must hide answer blocks before selection');
+}
 
 console.log(`Checks passed: ${scripts.length} scripts, ${chart.length} pinyin entries, no banned identifiers`);

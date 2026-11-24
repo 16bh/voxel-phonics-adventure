@@ -445,11 +445,11 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
     <ul class="help">
       <li>开始时选择<b>英文自然拼读</b>或<b>汉语拼音</b>。拼音题使用开源 pinyin-chart 数据，按声母、韵母和声调组合音节。</li>
       <li>英文保留原有词库；拼音共 10 关。每关可选 10 或 20 题，题目会随机打乱。</li>
-      <li>按从左到右点答案。英文逐字母拼词，拼音依次选择<b>声母、韵母、声调</b>。</li>
+      <li>探险家沿着道路前进，遇到随机怪物后答题。英文逐字母拼词，拼音依次选择<b>声母、韵母、声调</b>。</li>
       <li>第一关只有<b>木剑</b>。每关通关都会获得宝箱，打开后得到两件武器；已解锁武器会保存在本机。</li>
       <li>答题太慢时，怪物会逼近并攻击。探险家有<b>三滴血</b>，血量耗尽后本关必须重新开始。</li>
       <li>打击特效：爆破方块命中会<b>爆炸</b>并轻微震屏，火焰弹命中怪物后会<b>着火</b>，毒药瓶冒绿雾，水晶镐崩出石屑。</li>
-      <li>最后一个字母变残影后，怪物原地爆掉，正好一只怪一个单词。</li>
+      <li>每完成一个拼读，探险家会继续向前；每完成五题，宝箱会出现在道路尽头，走过去即可领取武器。</li>
       <li>点错不直接扣命，但不会重置怪物逼近计时。同一位置错两次会自动亮出正确答案。</li>
       <li>右上角工具：<b>提示</b>闪下一个字母，<b>朗读</b>再读一遍，<b>音效</b>开关，<b>暂停</b>，<b>全屏</b>。</li>
       <li>快捷键：<kbd>字母键</kbd> 选字母 · <kbd>H</kbd> 提示 · <kbd>R</kbd> 朗读 · <kbd>Esc</kbd> 暂停</li>
@@ -638,6 +638,8 @@ function makePinyinLevels(){
   var chart=window.PINYIN_CHART||[];
   var compound=['ai','ei','ao','ou','ia','ie','iao','iu','ua','uo','uai','ui','üe'];
   var nasal=['an','en','ang','eng','ong','ian','in','iang','ing','iong','uan','un','uang','ueng','üan','ün'];
+  var spellingFinals={wa:'a',wo:'o',wai:'ai',wei:'ei',wan:'an',wen:'en',wang:'ang',weng:'eng',wu:'u',
+    ya:'a',ye:'e',yao:'ao',you:'ou',yan:'an',yin:'in',yang:'ang',ying:'ing',yong:'ong',yi:'i',yu:'ü',yue:'üe',yuan:'üan',yun:'ün'};
   var specs=[
     {tag:'a o e',name:'基础音节',rule:'认识最基础的单韵母和整体音节。按韵母、声调的顺序完成拼音。',by:'final',ok:function(x){return ['a','o','e','yi','wu','yu','er'].indexOf(x.syllable)>=0;}},
     {tag:'b p m f',name:'双唇音',rule:'双唇音 b、p、m、f 与不同韵母相拼。',by:'initial',ok:function(x){return ['b','p','m','f'].indexOf(x.initial)>=0;}},
@@ -657,10 +659,12 @@ function makePinyinLevels(){
       if(!groups[key])groups[key]=[];
       Object.keys(x.tones||{}).forEach(function(tone){
         var td=x.tones[tone];if(!td)return;
+        var visibleFinal=spellingFinals[x.syllable]||x.final;
+        if(['j','q','x'].indexOf(x.initial)>=0)visibleFinal=visibleFinal.replace(/ü/g,'u');
         var tokens=[],types=[];
         if(x.initial){tokens.push(x.initial);types.push('initial');}
-        tokens.push(x.final);types.push('final');tokens.push(TONE_MARKS[tone]);types.push('tone');
-        var desc=(x.initial?'声母 '+x.initial+' · ':'零声母 · ')+'韵母 '+x.final+' · 调号 '+TONE_MARKS[tone]+'（'+TONE_NAMES[tone]+'）';
+        tokens.push(visibleFinal);types.push('final');tokens.push(TONE_MARKS[tone]);types.push('tone');
+        var desc=(x.initial?'声母 '+x.initial+' · ':'零声母 · ')+'韵母 '+visibleFinal+' · 调号 '+TONE_MARKS[tone]+'（'+TONE_NAMES[tone]+'）';
         groups[key].push([td.pinyin,'🔤',desc,tokens,types,td.character]);
       });
     });
@@ -894,6 +898,7 @@ function ttsSpeak(text,rate,onEnd){
 function say(text,rate){return ttsSpeak((APP_MODE==='pinyin'&&G.spoken)?G.spoken:text,rate||.9);}
 function startSayLoop(){
   stopSayLoop();
+  if(APP_MODE==='pinyin')return;
   if(!sndOn||!window.speechSynthesis)return;
   sayActive=true;
   var myId=sayLoopId;
@@ -1342,11 +1347,11 @@ function buildHero(){
   armR.rotation.x=-1.45;
   g.add(armL);g.add(armR);
 
-  g.add(limb(.24,.75,.24,pants,-.13,.75,0));
-  g.add(limb(.24,.75,.24,pants,.13,.75,0));
+  var legL=limb(.24,.75,.24,pants,-.13,.75,0),legR=limb(.24,.75,.24,pants,.13,.75,0);
+  g.add(legL);g.add(legR);
 
-  g.userData.head=head;g.userData.armR=armR;g.userData.armL=armL;
-  g.userData.weaponGrp=null;g.userData.swingT=0;
+  g.userData.head=head;g.userData.armR=armR;g.userData.armL=armL;g.userData.legL=legL;g.userData.legR=legR;
+  g.userData.weaponGrp=null;g.userData.swingT=0;g.userData.routeX=HERO_ROUTE_START;
 
   g.position.copy(HERO_POS);
   g.rotation.y=1.675;
@@ -1800,8 +1805,7 @@ function picCard(emoji,gloss){
   x.textAlign='center';x.textBaseline='middle';
   x.fillStyle='#2b1c0e';
   if(APP_MODE==='pinyin'){
-    var ls=String(gloss).split('·');x.font='900 12px "Microsoft YaHei","PingFang SC",sans-serif';
-    ls.forEach(function(line,i){x.fillText(line.trim(),W/2,126+i*18);});
+    x.font='900 15px "Microsoft YaHei","PingFang SC",sans-serif';x.fillText('选择正确拼音',W/2,144);
   }else{
     x.font='900 26px "Microsoft YaHei","PingFang SC",sans-serif';x.fillText(gloss,W/2,144);
   }
@@ -2030,9 +2034,11 @@ function buildTitleMob(){
 
 /* ---------------- 状态 ---------------- */
 var G={scr:'title',li:0,wi:0,pos:0,mistakes:0,posMiss:0,locked:true,paused:false,done:false,
-       word:'',gloss:'',emoji:'',tiles:[],monster:null,words:[],idleT:0,startT:0,levelMist:0,total:0,
+       word:'',character:'',gloss:'',emoji:'',tiles:[],monster:null,words:[],idleT:0,startT:0,levelMist:0,total:0,
        helpBack:'title',blocks:[],wordGrp:null,card:null,cardOffX:0,cardOffXT:0,wordW:0,mobKind:'',weapon:null,
-       roundWords:null,tokens:[],tokenTypes:[],spoken:'',hp:3,threatT:0,attacking:false};
+       roundWords:null,tokens:[],tokenTypes:[],spoken:'',hp:3,threatT:0,attacking:false,
+       heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false};
+var HERO_ROUTE_START=-4.35,HERO_ROUTE_END=2.4,ROUTE_SPEED=3.2;
 var MON_TARGET_X=2.15,MON_ATTACK_X=-2.65,MON_Z=2.65,MON_SPAWN_X=9.0,MON_SPEED=6.2,ATTACK_AFTER=9;
 
 function setScreen(name){
@@ -2085,7 +2091,7 @@ function openIntro(i){
   G.roundWords=round;
   var chips=round.map(function(w){return '<div class="wchip">'+w[1]+'<i>'+w[0]+'</i></div>';}).join('');
   var modeLine=APP_MODE==='pinyin'?'模式：声母 + 韵母 + 声调':'模式：英文基础拼读';
-  var desc=APP_MODE==='pinyin'?'看音节、听发音，按顺序选择<b>声母、韵母、声调</b>。答得太慢，怪物会逼近攻击。':'方块怪举着单词和图形走过来，还会<b>反复读</b>这个词。按顺序点字母，阻止怪物逼近。';
+  var desc=APP_MODE==='pinyin'?'看汉字，按顺序选择<b>声母、韵母、声调</b>。答得太慢，怪物会逼近攻击。':'探险家沿着道路前进，遇到随机怪物后拼出单词。答得太慢，怪物会逼近攻击。';
   $('#intro .panel').innerHTML=
     '<div class="ititle">第 '+(i+1)+' 关 · '+L.name+'</div>'+
     '<div class="isub">规则：'+L.tag+' · '+modeLine+' · 本轮随机 '+save.len+' 个</div>'+
@@ -2133,7 +2139,7 @@ function switchWeapon(id){
   equipWeapon(id);
   syncWeaponUI();
   var m=G.monster;
-  if(m&&m.userData.state!=='die'){
+  if(m&&m.userData.state!=='die'&&m.userData.state!=='wait'){
     var tgt=(w.mode==='melee')?w.dist:MON_TARGET_X;
     m.userData.state='walk';
     m.userData.targetX=tgt;
@@ -2168,6 +2174,8 @@ function startLevel(i,keepRound){
   G.roundWords=base;
   G.li=i;G.wi=0;G.mistakes=0;G.levelMist=0;G.paused=false;G.locked=true;G.done=false;
   G.hp=3;G.threatT=0;G.attacking=false;updateHealth();updateThreat();
+  G.heroTargetX=HERO_ROUTE_START;G.heroMoving=false;G.chest=null;G.chestAfterFinish=false;
+  if(hero){hero.userData.routeX=HERO_ROUTE_START;hero.position.x=HERO_ROUTE_START;}
   G.words=shuffleWords(base,i);
   G.total=G.words.length;
   G.weapon=nextWeapon();
@@ -2194,6 +2202,7 @@ function clearBoard(){
   if(G.monster){scene.remove(G.monster);G.monster=null;}
   if(G.wordGrp){scene.remove(G.wordGrp);G.wordGrp=null;}
   if(G.card){scene.remove(G.card);G.card=null;}
+  if(G.chest){scene.remove(G.chest);G.chest=null;}
   G.blocks=[];
   strikes.forEach(function(a){scene.remove(a.g);});strikes.length=0;
   parts.forEach(function(p){scene.remove(p.mesh);});parts.length=0;
@@ -2201,20 +2210,24 @@ function clearBoard(){
 
 function spawnWord(entry){
   var e=entry||G.words[G.wi];
-  G.word=e[0];G.emoji=e[1];G.gloss=e[2];
+  G.word=e[0];G.character=APP_MODE==='pinyin'?(e[6]||e[0]):'';G.emoji=e[1];G.gloss=e[2];
   G.tokens=(e[4]&&e[4].length)?e[4].slice():G.word.toLowerCase().split('');
   G.tokenTypes=(e[5]&&e[5].length)?e[5].slice():G.tokens.map(function(c){return VOWELS.indexOf(c)>=0?'final':'initial';});
-  G.spoken=e[6]||G.word;
+  G.spoken=APP_MODE==='pinyin'?(G.character||G.word):G.word;
   G.pos=0;G.posMiss=0;G.locked=true;G.idleT=0;G.threatT=0;G.attacking=false;G.done=false;updateThreat();
   G.letterSpeaking=false;G.pendingFinale=false;G.finaleFn=null;
 
+  var routeX=HERO_ROUTE_START+Math.min(G.wi*.48,HERO_ROUTE_END-HERO_ROUTE_START);
+  G.heroTargetX=routeX;G.heroMoving=Math.abs((hero&&hero.userData.routeX||HERO_ROUTE_START)-routeX)>.03;
+
   var kind=pickKind();
   var m=buildMob(kind);
-  m.position.set(MON_SPAWN_X,0,MON_Z);
+  var monsterX=Math.min(MON_SPAWN_X,routeX+3.15);
+  m.position.set(kind==='blinkshade'?monsterX+1.2:monsterX,0,MON_Z);
   m.rotation.y=-0.6;
-  m.userData.state=kind==='blinkshade'?'teleportIn':'walk';
-  m.userData.targetX=(G.weapon&&G.weapon.mode==='melee')?G.weapon.dist:MON_TARGET_X;
-  m.userData.t=0;m.userData.teleportT=0;m.userData.homeX=m.userData.targetX;
+  m.userData.state=kind==='blinkshade'?'teleportIn':'wait';
+  m.userData.targetX=monsterX;
+  m.userData.t=0;m.userData.teleportT=0;m.userData.homeX=monsterX;
   scene.add(m);
   G.monster=m;G.mobKind=kind;
 
@@ -2227,17 +2240,17 @@ function spawnWord(entry){
   scene.add(wg);
   G.wordGrp=wg;G.blocks=[];
   for(var i=0;i<n;i++){
-    var ch=G.tokens[i];
+    var ch=G.tokens[i],displayCh=APP_MODE==='pinyin'?'?':ch;
     var isV=G.tokenTypes[i]==='final'||/[aeiouAEIOU]/.test(ch);
     var bw=String(ch).length>1?.84:.54;
-    var bm=new T.Mesh(new T.BoxGeometry(bw,.68,.1),blockMats(ch,isV));
+    var bm=new T.Mesh(new T.BoxGeometry(bw,.68,.1),blockMats(displayCh,isV));
     bm.castShadow=true;
     bm.position.set((i-(n-1)/2)*gap,0,0);
     bm.userData.tx=(i-(n-1)/2)*gap;
     bm.userData.idx=i;bm.userData.gone=false;
     wg.add(bm);G.blocks.push(bm);
   }
-  var pic=picCard(APP_MODE==='pinyin'?G.word:G.emoji,G.gloss);
+  var pic=picCard(APP_MODE==='pinyin'?G.character:G.emoji,G.gloss);
   G.cardOffX=G.cardOffXT=(n*gap)/2+.92;
   pic.position.set(MON_SPAWN_X+G.cardOffX,banY-.14,MON_Z+.08);
   scene.add(pic);
@@ -2312,12 +2325,15 @@ function tapTile(i){
   var need=G.tokens[G.pos];
   var ok=(t.c.toLowerCase()===need.toLowerCase());
   /* 点备选字母先读一次字母名（对错都读）；读完若收尾整词在等就先读整词，否则接回循环朗读 */
-  var speakNow=APP_MODE==='pinyin'?(G.spoken||G.word):t.c.toUpperCase();
-  G.letterSpeaking=ttsSpeak(speakNow,.95,function(){
+  if(APP_MODE==='pinyin'){
     G.letterSpeaking=false;
-    if(G.pendingFinale){G.pendingFinale=false;var f=G.finaleFn;G.finaleFn=null;if(f)f();}
-    else if(G.scr==='play'&&!G.paused&&!G.done&&!G.locked)startSayLoop();
-  });
+  }else{
+    G.letterSpeaking=ttsSpeak(t.c.toUpperCase(),.95,function(){
+      G.letterSpeaking=false;
+      if(G.pendingFinale){G.pendingFinale=false;var f=G.finaleFn;G.finaleFn=null;if(f)f();}
+      else if(G.scr==='play'&&!G.paused&&!G.done&&!G.locked)startSayLoop();
+    });
+  }
   if(ok){
     t.used=true;t.el.classList.add('used');t.el.classList.remove('hint');
     var idx=G.pos;
@@ -2497,10 +2513,14 @@ function onWordDone(){
   var w=G.word,gl=G.gloss;
   markQuestionSeen(G.li,[w]);
   sfx('win');
-  toast('good','拼对了！<b style="font-family:var(--num);font-size:1.18em">'+w+'</b>'+(APP_MODE==='pinyin'?' · '+gl:' = '+gl));
+  toast('good','拼对了！<b style="font-family:var(--num);font-size:1.18em">'+(APP_MODE==='pinyin'?G.character:w)+'</b>'+(APP_MODE==='pinyin'?' = '+w:' = '+gl));
   killMob();
   var goFinale=function(){
-    saySeq(G.spoken||w,.72,function(){G.done=false;nextWord();});
+    if(APP_MODE==='pinyin'){
+      stopSayLoop();setTimeout(function(){G.done=false;nextWord();},2000);
+    }else{
+      saySeq(G.spoken||w,.72,function(){G.done=false;nextWord();});
+    }
   };
   /* 最后一个字母的字母名可能还在读：先别硬停（stopSayLoop 会切断它），
      等字母名读完再读整词；字母已读完则照常停循环、读整词 */
@@ -2509,8 +2529,11 @@ function onWordDone(){
 }
 /* 朗读链安全封装：TTS 不可用（静音/缺失）时直接走下一步，不卡关 */
 function saySeq(text,rate,next){
-  var ok=ttsSpeak(text,rate,next);
-  if(!ok&&next)next();
+  var done=false;
+  var finish=function(){if(done)return;done=true;if(next)next();};
+  var ok=ttsSpeak(text,rate,finish);
+  if(!ok){finish();return;}
+  setTimeout(finish,APP_MODE==='pinyin'?2000:2400);
 }
 function killMob(){
   var m=G.monster;if(!m)return;
@@ -2529,13 +2552,42 @@ function killMob(){
 function nextWord(){
   clearBoard();
   G.wi++;
-  if(G.wi>=G.total){finishLevel();return;}
-  spawnWord();
   updateProgress();
+  if(G.wi>=G.total){
+    if(G.wi%5===0)spawnRoadChest(true);else finishLevel();
+    return;
+  }
+  if(G.wi%5===0)spawnRoadChest(false);else spawnWord();
 }
 function updateProgress(){
   $('#prog .num').textContent=G.wi+'/'+G.total;
   $('#prog .fill').style.width=Math.round(G.wi/G.total*100)+'%';
+}
+
+function buildRoadChest(){
+  var g=new T.Group();
+  var wood=new T.MeshLambertMaterial({color:0xa96722}),top=new T.MeshLambertMaterial({color:0xc47d2e}),lock=new T.MeshLambertMaterial({color:0xf2c33f,emissive:0x6b4800});
+  var body=new T.Mesh(new T.BoxGeometry(.9,.48,.7),wood);body.position.y=.36;g.add(body);
+  var lid=new T.Mesh(new T.BoxGeometry(.94,.18,.74),top);lid.position.y=.69;g.add(lid);
+  var clasp=new T.Mesh(new T.BoxGeometry(.16,.26,.08),lock);clasp.position.set(0,.5,.38);g.add(clasp);
+  g.userData.lid=lid;g.userData.opening=false;g.position.set(HERO_ROUTE_END+.85,.02,MON_Z);scene.add(g);return g;
+}
+function spawnRoadChest(afterFinish){
+  G.chest=buildRoadChest();G.chestAfterFinish=afterFinish;G.locked=true;G.threatT=0;G.attacking=false;updateThreat();
+  G.heroTargetX=G.chest.position.x-1.25;
+  G.heroMoving=Math.abs((hero&&hero.userData.routeX||HERO_ROUTE_START)-G.heroTargetX)>.03;
+  coach('道路尽头出现宝箱，探险家走过去打开它！',3200);
+}
+function claimRoadChest(){
+  var chest=G.chest;if(!chest||!chest.userData.opening)return;
+  chest.userData.lid.rotation.x=-.72;chest.userData.opened=true;sfx('win');
+  var got=chestRewards();
+  renderWeaponBar();
+  toast('good','宝箱获得：<b>'+got.items.map(function(w){return w.name;}).join('、')+'</b>');
+  setTimeout(function(){
+    if(G.chest){scene.remove(G.chest);G.chest=null;}
+    G.chestAfterFinish?finishLevel():spawnWord();
+  },2500);
 }
 
 /* ---------------- 结算 ---------------- */
@@ -2551,14 +2603,6 @@ function chestRewards(){
   save.unlocked[APP_MODE]=have;persist();
   return {items:out,enhanced:enhanced};
 }
-function openChest(){
-  var chest=$('#rewardChest');if(!chest||chest.classList.contains('open'))return;
-  chest.classList.add('open');sfx('win');
-  var got=chestRewards(),box=$('#rewardItems');
-  box.innerHTML=got.items.map(function(w){return '<div class="reward"><span class="ri">'+w.icon+'</span>'+w.name+(got.enhanced?'<br><small>附魔强化</small>':'')+'</div>';}).join('');
-  $('#chestHint').textContent=got.enhanced?'武器已经集齐，本次获得附魔强化':'新武器已加入上方武器栏';
-  setTimeout(function(){$('#resultActions').classList.remove('hide');},520);
-}
 function finishLevel(){
   var m=G.levelMist;
   var stars=m===0?3:(m<=2?2:1);
@@ -2573,9 +2617,8 @@ function finishLevel(){
     '<div class="bigstars">'+starSvg+starSvg+starSvg+'</div>'+
     '<div class="statrow"><span>'+(APP_MODE==='pinyin'?'读音':'单词')+' <b>'+G.total+'</b></span><span>点错 <b>'+m+'</b> 次</span><span>用时 <b>'+mm+':'+ss+'</b></span></div>'+
     '<div class="wchips">'+chips+'</div>'+
-    '<div class="reward-zone"><button class="chest" id="rewardChest" aria-label="打开宝箱"><span class="lid"></span><span class="body"></span><span class="lock"></span></button>'+
-    '<div class="isub" id="chestHint">点击宝箱，领取两件武器</div><div class="rewards" id="rewardItems"></div></div>'+
-    '<div class="btns hide" id="resultActions">'+
+    '<div class="isub">本关宝箱奖励已在道路上领取</div>'+
+    '<div class="btns" id="resultActions">'+
       '<button class="btn green" id="bAgain">再来一轮</button>'+
       (G.li<LEVELS.length-1?'<button class="btn blue" id="bNext">下一关</button>':'')+
       (G.li===LEVELS.length-1?'<button class="btn orange" id="bPortal">进入传送门</button>':'')+
@@ -2586,7 +2629,6 @@ function finishLevel(){
   if($('#bNext'))$('#bNext').onclick=function(){startLevel(G.li+1,false);};
   if($('#bPortal'))$('#bPortal').onclick=startFinale;
   $('#bToMenu').onclick=function(){renderLevels();setScreen('levels');};
-  $('#rewardChest').onclick=openChest;
   setScreen('result');
   sfx('win');
 }
@@ -2660,9 +2702,9 @@ function teleportBurst(m){
 function beginMonsterAttack(){
   var m=G.monster;if(!m||G.attacking||G.done||G.scr!=='play')return;
   G.attacking=true;G.locked=true;paintSlots();stopSayLoop();
-  var u=m.userData;u.homeX=(G.weapon&&G.weapon.mode==='melee')?G.weapon.dist:MON_TARGET_X;u.attackT=0;u.didHit=false;
+  var u=m.userData;u.homeX=m.position.x;u.attackX=(hero?hero.position.x:MON_TARGET_X)-.8;u.attackT=0;u.didHit=false;
   if(u.kind==='blinkshade'){u.state='teleportAttack';u.teleportT=0;u.teleported=false;teleportBurst(m);}
-  else{u.state='attackRun';u.targetX=MON_ATTACK_X;u.arrived=false;}
+  else{u.state='attackRun';u.targetX=u.attackX;u.arrived=false;}
   coach(u.kind==='blinkshade'?'闪影瞬移过来了！':'太慢了，怪物正在逼近！',2200);
 }
 function playerHurt(){
@@ -2796,6 +2838,18 @@ function update(dt,t){
   /* 探险家：呼吸起伏 + 缓慢转头张望 + 手臂微摆 + 出手挥击 */
   if(hero){
     var su=hero.userData;
+    if(G.scr==='play'&&G.heroMoving){
+      var rdx=G.heroTargetX-(su.routeX||HERO_ROUTE_START);
+      if(Math.abs(rdx)>.02){su.routeX+=(rdx>0?1:-1)*Math.min(Math.abs(rdx),ROUTE_SPEED*dt);}
+      else{su.routeX=G.heroTargetX;G.heroMoving=false;}
+    }
+    if(G.scr==='play'&&!G.heroMoving&&G.monster&&G.monster.userData.state==='wait'&&G.locked){
+      G.monster.userData.arrived=true;G.locked=false;paintSlots();
+      coach('探险家到达战斗点，把 <b>'+(APP_MODE==='pinyin'?G.character:G.word)+'</b> 的'+(APP_MODE==='pinyin'?'拼音':'字母')+'按顺序点出来。',3000);
+    }
+    if(G.scr==='play'&&!G.heroMoving&&G.chest&&!G.chest.userData.opening){
+      G.chest.userData.opening=true;setTimeout(claimRoadChest,1500);
+    }
     var hd=su.head;
     hd.position.y=1.75+Math.sin(t*1.5)*.016;
     hd.rotation.y=-0.85+Math.sin(t*.52)*.20;
@@ -2820,12 +2874,12 @@ function update(dt,t){
         wg.position.y=(su.wBaseY||1.2);
         wg.position.z=(wg.userData.baseZ||.66)+pose.pz-rc*.6;
       }
-      hero.position.x=HERO_POS.x+pose.px;
+      hero.position.x=(su.routeX||HERO_ROUTE_START)+pose.px;
       su.swingDy=pose.dy;
     }else{
       su.armR.rotation.x=su.armBase+Math.sin(t*1.15)*.055;
       su.armR.rotation.z=0;
-      hero.position.x=HERO_POS.x;
+      hero.position.x=su.routeX||HERO_ROUTE_START;
       su.swingDy=0;
       var wg2=su.weaponGrp;
       if(wg2){
@@ -2836,6 +2890,9 @@ function update(dt,t){
     }
     su.armL.rotation.x=-.42+breath*.09;
     su.armL.rotation.z=.18+Math.sin(t*.9)*.04;
+    if(su.legL&&su.legR){
+      var walk=G.heroMoving?Math.sin(t*9)*.58:0;su.legL.rotation.x=walk;su.legR.rotation.x=-walk;
+    }
     hero.position.y=Math.abs(Math.sin(t*1.15))*.014+(su.swingDy||0);
   }
   /* 云 + 飞鸟 */
@@ -2859,11 +2916,13 @@ function update(dt,t){
       u.teleportT+=dt;
       if(u.teleportT<.22)setMobOpacity(m,1-u.teleportT/.22);
       else{
-        if(!u.teleported){u.teleported=true;m.position.x=MON_SPAWN_X-2.1;teleportBurst(m);}
+        if(!u.teleported){u.teleported=true;m.position.x=u.homeX;teleportBurst(m);}
         setMobOpacity(m,Math.min(1,(u.teleportT-.22)/.28));
       }
       if(u.anim)u.anim(u.t+=dt,false);
-      if(u.teleportT>.56){setMobOpacity(m,1);u.state='walk';u.teleportT=0;u.teleported=false;}
+      if(u.teleportT>.56){setMobOpacity(m,1);u.state='wait';u.teleportT=0;u.teleported=false;}
+    }else if(u.state==='wait'){
+      u.t+=dt;if(u.anim)u.anim(u.t,false);
     }else if(u.state==='walk'){
       var moving=false;
       var dx=u.targetX-m.position.x;
@@ -2882,15 +2941,15 @@ function update(dt,t){
       u.t+=dt;
       if(u.anim)u.anim(u.t,moving);
     }else if(u.state==='attackRun'){
-      var adx=MON_ATTACK_X-m.position.x;
+      var adx=(u.targetX||MON_ATTACK_X)-m.position.x;
       m.position.x+=adx>0?Math.min(adx,MON_SPEED*1.35*dt):-Math.min(-adx,MON_SPEED*1.35*dt);
       u.t+=dt;if(u.anim)u.anim(u.t,true);
-      if(Math.abs(MON_ATTACK_X-m.position.x)<.04){m.position.x=MON_ATTACK_X;u.state='attackHit';u.attackT=0;}
+      if(Math.abs((u.targetX||MON_ATTACK_X)-m.position.x)<.04){m.position.x=u.targetX||MON_ATTACK_X;u.state='attackHit';u.attackT=0;}
     }else if(u.state==='teleportAttack'){
       u.teleportT+=dt;
       if(u.teleportT<.2)setMobOpacity(m,1-u.teleportT/.2);
       else{
-        if(!u.teleported){u.teleported=true;m.position.x=MON_ATTACK_X;teleportBurst(m);}
+        if(!u.teleported){u.teleported=true;m.position.x=u.attackX||MON_ATTACK_X;teleportBurst(m);}
         setMobOpacity(m,Math.min(1,(u.teleportT-.2)/.22));
       }
       if(u.teleportT>.46){setMobOpacity(m,1);u.state='attackHit';u.attackT=0;}
@@ -2905,7 +2964,7 @@ function update(dt,t){
       m.position.x+=rdx>0?Math.min(rdx,MON_SPEED*dt):-Math.min(-rdx,MON_SPEED*dt);
       u.t+=dt;if(u.anim)u.anim(u.t,true);
       if(Math.abs(rdx)<.04){
-        m.position.x=u.targetX;u.state='walk';u.arrived=true;G.attacking=false;G.locked=false;paintSlots();startSayLoop();
+        m.position.x=u.targetX;u.state='wait';u.arrived=true;G.attacking=false;G.locked=false;paintSlots();startSayLoop();
         coach('还剩 <b>'+G.hp+'</b> 滴血，快继续！',2200);
       }
     }else if(u.state==='die'){
@@ -3021,7 +3080,8 @@ function toggleFull(){
   }catch(e){}
 }
 function chooseMode(mode){
-  APP_MODE=mode;G.roundWords=null;applyMode();renderLevels();setScreen('levels');sfx('tap');
+  APP_MODE=mode;G.roundWords=null;applyMode();renderLevels();setScreen('levels');
+  $('#bSay').classList.toggle('hide',mode==='pinyin');sfx('tap');
 }
 function bind(){
   /* 每组词量设置（关卡选择页） */
@@ -3045,7 +3105,7 @@ function bind(){
   $('#bHelpOk').onclick=function(){setScreen(G.helpBack||'title');};
   $('#bTip').onclick=function(){hintTile();sfx('tap');};
   $('#bSay').onclick=function(){
-    if(!G.word)return;
+    if(!G.word||APP_MODE==='pinyin')return;
     say(G.word,.9);
     if(!G.done&&G.scr==='play')setTimeout(function(){if(!G.done&&G.scr==='play')startSayLoop();},2000);
   };
@@ -3074,7 +3134,7 @@ function bind(){
     }
     if(G.scr!=='play'||G.paused)return;
     if(e.key==='h'||e.key==='H'){hintTile();return;}
-    if(e.key==='r'||e.key==='R'){say(G.word,.9);if(!G.done)setTimeout(function(){if(!G.done&&G.scr==='play')startSayLoop();},2000);return;}
+    if((e.key==='r'||e.key==='R')&&APP_MODE==='english'){say(G.word,.9);if(!G.done)setTimeout(function(){if(!G.done&&G.scr==='play')startSayLoop();},2000);return;}
     if(APP_MODE==='english'&&/^[a-zA-Z]$/.test(e.key)){
       var ch=e.key.toLowerCase();
       for(var i=0;i<G.tiles.length;i++){
