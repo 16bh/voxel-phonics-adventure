@@ -41,6 +41,7 @@ const findings = banned.flatMap((pattern) => {
 
 if (chart.length !== 411) throw new Error(`Expected 411 pinyin entries, got ${chart.length}`);
 if (output.includes('__PINYIN_CHART__')) throw new Error('Built file still contains a data placeholder');
+if (output.includes('__ROUTE_MAP_BG__')) throw new Error('Built file still contains the route map placeholder');
 if (findings.length) throw new Error(`Sanitization check failed:\n${findings.join('\n')}`);
 if (!template.includes("wai:'ai'") || !template.includes("wei:'ei'")) {
   throw new Error('Pinyin spelling overrides for wai/wei are missing');
@@ -49,7 +50,19 @@ if (!template.includes("APP_MODE==='pinyin'?'?':ch")) {
   throw new Error('Pinyin questions must hide answer blocks before selection');
 }
 if (!template.includes('G.weapon=autoWeapon') || !template.includes('equipWeapon(autoWeapon.id)')) {
-  throw new Error('Road chest rewards must auto-equip a newly awarded weapon');
+  throw new Error('Final chest rewards must auto-equip a newly awarded weapon');
+}
+if (!template.includes("save.equipped[APP_MODE]=autoWeapon.id") || !template.includes('return WMAP[equipped]')) {
+  throw new Error('Equipped chest rewards must carry over to the next level');
+}
+if (!template.includes("ttsSpeak(spokenCharacter,.82)")) {
+  throw new Error('Pinyin questions must speak the displayed Chinese character once');
+}
+if (!template.includes("setScreen('route')") || !template.includes('renderRouteMap(true)')) {
+  throw new Error('The route overview flow is missing');
+}
+if (template.includes('G.wi%5===0')) {
+  throw new Error('Intermediate five-question chests must stay disabled');
 }
 
 console.log(`Checks passed: ${scripts.length} scripts, ${chart.length} pinyin entries, no banned identifiers`);

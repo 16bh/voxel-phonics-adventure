@@ -253,6 +253,59 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
   box-shadow:inset calc(var(--u)*.2) calc(var(--u)*.2) 0 #6a6a6a,inset calc(var(--u)*-.2) calc(var(--u)*-.2) 0 #111;animation:rewardPop .45s cubic-bezier(.3,1.7,.5,1)}
 .reward .ri{display:block;font-size:calc(var(--u)*2.15)}
 @keyframes rewardPop{0%{transform:translateY(calc(var(--u)*1.5)) scale(.4);opacity:0}100%{transform:none;opacity:1}}
+
+/* route overview */
+#route{background:#6fbd43;overflow:hidden;isolation:isolate}
+.route-bg{position:absolute;inset:0;background-image:url("__ROUTE_MAP_BG__");background-size:cover;background-position:center;image-rendering:auto}
+.route-bg:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 calc(var(--u)*8) rgba(18,38,14,.3);pointer-events:none}
+.route-head{position:absolute;left:0;right:0;top:0;z-index:8;min-height:calc(var(--u)*5.4);display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1);
+  padding:calc(var(--u)*.6) calc(var(--u)*1.2);background:rgba(28,34,48,.94);color:#fff;
+  box-shadow:inset 0 calc(var(--u)*.2) 0 #56617b,inset 0 calc(var(--u)*-.22) 0 #0b0f19,0 calc(var(--u)*.3) 0 rgba(0,0,0,.42)}
+.route-title{font-weight:900;font-size:calc(var(--u)*2.35);color:#ffe27a;text-shadow:calc(var(--u)*.15) calc(var(--u)*.15) 0 #6f4400;white-space:nowrap}
+.route-meta{display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*1.5);min-width:0;font-weight:900;font-size:calc(var(--u)*1.15)}
+.route-meta b{color:#ffe27a}.route-gear{display:flex;align-items:center;gap:calc(var(--u)*.5);white-space:nowrap}
+.route-gear .gear-icon{font-size:calc(var(--u)*1.8)}
+.route-exit{font-family:var(--cn);font-weight:900;border:0;color:#fff;background:#596278;cursor:pointer;padding:calc(var(--u)*.45) calc(var(--u)*.9);
+  box-shadow:inset calc(var(--u)*.16) calc(var(--u)*.16) 0 #8b96ac,inset calc(var(--u)*-.16) calc(var(--u)*-.16) 0 #252b38,0 0 0 calc(var(--u)*.14) #111}
+.route-stage{position:absolute;inset:calc(var(--u)*5.5) 0 0;overflow:hidden}
+#routeSvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.route-track-shadow{fill:none;stroke:#744622;stroke-width:7.8;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
+.route-track{fill:none;stroke:#e6ad62;stroke-width:5.9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1.1 1.25}
+.route-track-done{fill:none;stroke:#ffe15a;stroke-width:1.05;stroke-linecap:round;stroke-dasharray:1.1 1.7;filter:drop-shadow(0 0 .35px #6f4200)}
+#routeNodes{position:absolute;inset:0}
+.route-node{position:absolute;width:calc(var(--u)*3.6);height:calc(var(--u)*3.6);transform:translate(-50%,-50%);z-index:3;
+  display:flex;align-items:center;justify-content:center;background:#6f7788;border:calc(var(--u)*.18) solid #202532;
+  box-shadow:inset calc(var(--u)*.22) calc(var(--u)*.22) 0 rgba(255,255,255,.42),inset calc(var(--u)*-.22) calc(var(--u)*-.22) 0 rgba(0,0,0,.38),0 calc(var(--u)*.28) 0 rgba(0,0,0,.34)}
+.route-node .mn{position:relative;width:62%;height:62%;background:#668f44;border:calc(var(--u)*.13) solid #202418;
+  box-shadow:inset calc(var(--u)*.14) calc(var(--u)*.14) 0 rgba(255,255,255,.34)}
+.route-node .mn:before,.route-node .mn:after{content:"";position:absolute;top:35%;width:18%;height:18%;background:#f8efb8;box-shadow:0 0 0 calc(var(--u)*.06) #111}
+.route-node .mn:before{left:18%}.route-node .mn:after{right:18%}
+.route-node[data-kind="mossling"] .mn{background:#5ba838}.route-node[data-kind="skeleton"] .mn{background:#d7d2ba}
+.route-node[data-kind="blinkshade"] .mn{background:#332843;height:82%;width:48%}.route-node[data-kind="blinkshade"] .mn:before,.route-node[data-kind="blinkshade"] .mn:after{background:#d681ff}
+.route-node[data-kind="spider"] .mn{background:#403845;width:78%;height:46%}.route-node[data-kind="slime"] .mn{background:#62c75a;border-radius:4px}
+.route-node.done{width:calc(var(--u)*2.7);height:calc(var(--u)*2.7);background:#4fa637;filter:saturate(.8)}
+.route-node.done .mn{opacity:.22}.route-node.done:after{content:"\2713";position:absolute;color:#fff;font:900 calc(var(--u)*1.7)/1 var(--cn);text-shadow:calc(var(--u)*.1) calc(var(--u)*.1) 0 #1d5713}
+.route-node.current{width:calc(var(--u)*4.7);height:calc(var(--u)*4.7);background:#f1c23b;border-color:#5e3e08;z-index:5;
+  animation:routePulse 1.25s steps(2) infinite;box-shadow:inset calc(var(--u)*.25) calc(var(--u)*.25) 0 #ffe88f,inset calc(var(--u)*-.25) calc(var(--u)*-.25) 0 #9b6c0b,0 0 0 calc(var(--u)*.28) rgba(255,232,89,.7),0 calc(var(--u)*.35) 0 rgba(0,0,0,.35)}
+.route-node .step{position:absolute;top:calc(100% + var(--u)*.24);left:50%;transform:translateX(-50%);min-width:calc(var(--u)*2.2);padding:calc(var(--u)*.05) calc(var(--u)*.3);
+  background:rgba(31,35,45,.88);color:#fff;font:900 calc(var(--u)*.83)/1.35 var(--cn);text-align:center;white-space:nowrap;box-shadow:0 0 0 calc(var(--u)*.1) #111}
+@keyframes routePulse{50%{transform:translate(-50%,-50%) scale(1.08)}}
+.route-hero{position:absolute;z-index:7;width:calc(var(--u)*4.3);height:calc(var(--u)*5.2);transform:translate(-50%,-78%);transition:left 1.65s cubic-bezier(.34,.05,.18,1),top 1.65s cubic-bezier(.34,.05,.18,1);filter:drop-shadow(0 calc(var(--u)*.3) calc(var(--u)*.12) rgba(0,0,0,.42))}
+.route-hero.moving{animation:routeWalk .3s steps(2) infinite}.route-hero .rh-head{position:absolute;left:27%;top:0;width:46%;height:38%;background:#edb081;border:calc(var(--u)*.14) solid #382718;overflow:hidden}
+.route-hero .rh-head img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}.route-hero .rh-body{position:absolute;left:31%;top:36%;width:38%;height:34%;background:#4f88c7;border:calc(var(--u)*.14) solid #283b52}
+.route-hero .rh-body:before,.route-hero .rh-body:after{content:"";position:absolute;top:75%;width:38%;height:70%;background:#4d3d2f;border:calc(var(--u)*.12) solid #2c211a}
+.route-hero .rh-body:before{left:-5%}.route-hero .rh-body:after{right:-5%}
+@keyframes routeWalk{50%{margin-top:calc(var(--u)*-.3);transform:translate(-50%,-78%) rotate(2deg)}}
+.route-card{position:absolute;right:calc(var(--u)*1.5);bottom:calc(var(--u)*1.5);z-index:8;width:calc(var(--u)*25);padding:calc(var(--u)*1.1);
+  background:rgba(34,40,55,.95);color:#fff;box-shadow:inset calc(var(--u)*.24) calc(var(--u)*.24) 0 #6f788e,inset calc(var(--u)*-.24) calc(var(--u)*-.24) 0 #111827,0 0 0 calc(var(--u)*.22) #161a22,0 calc(var(--u)*.55) 0 rgba(0,0,0,.38)}
+.route-card h2{font-size:calc(var(--u)*1.8);line-height:1.2;color:#ffe27a;margin:0 0 calc(var(--u)*.45);letter-spacing:0}
+.route-card .rc-name{font-size:calc(var(--u)*1.35);font-weight:900}.route-card .rc-sub{font-size:calc(var(--u)*1.02);line-height:1.45;color:#d8dce5;font-weight:800;margin-top:calc(var(--u)*.3)}
+.route-card .btn{width:100%;margin-top:calc(var(--u)*.8);font-size:calc(var(--u)*1.45);padding:calc(var(--u)*.65) calc(var(--u)*1)}
+.route-card .btn:disabled{filter:grayscale(.8);cursor:default;opacity:.78;transform:none}
+.route-chest{position:absolute;z-index:6;width:calc(var(--u)*5.5);height:calc(var(--u)*4.5);transform:translate(-50%,-60%);animation:chestBob 1s infinite}
+.route-chest .lid,.route-chest .body{position:absolute;left:0;width:100%;background:#b66d22;border:calc(var(--u)*.16) solid #42270e;box-shadow:inset calc(var(--u)*.2) calc(var(--u)*.2) 0 #e5a448,inset calc(var(--u)*-.2) calc(var(--u)*-.2) 0 #6b3a10}
+.route-chest .lid{top:0;height:39%;transform-origin:50% 100%;transition:transform .45s}.route-chest .body{bottom:0;height:62%}.route-chest .lock{position:absolute;left:42%;top:34%;width:16%;height:34%;z-index:2;background:#f2c33f;border:calc(var(--u)*.1) solid #6c4b08}
+.route-chest.open{animation:none}.route-chest.open .lid{transform:translateY(calc(var(--u)*-.65)) rotateX(60deg)}
 #gameover .panel{display:flex;flex-direction:column;align-items:center;max-width:calc(var(--u)*56)}
 .death-hearts{font-size:calc(var(--u)*3.6);filter:grayscale(1);margin:calc(var(--u)*.7) 0}
 #finaleHud{position:absolute;inset:0;pointer-events:none;display:flex;align-items:flex-start;justify-content:center;padding-top:calc(var(--u)*2)}
@@ -363,6 +416,19 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
   #play{width:96vw}
   #intro,#result,#help,#gameover{overflow:auto;justify-content:flex-start;padding:calc(var(--u)*2) 0}
   #intro .panel,#result .panel,#help .panel,#gameover .panel{max-width:94vw}
+  .route-head{min-height:calc(var(--u)*9.2);align-items:flex-start;flex-wrap:wrap;padding:calc(var(--u)*.7) calc(var(--u)*1)}
+  .route-title{font-size:calc(var(--u)*2.2)}
+  .route-meta{order:3;width:100%;justify-content:flex-start;gap:calc(var(--u)*1);font-size:calc(var(--u)*1.08)}
+  .route-stage{inset:calc(var(--u)*9.2) 0 0}
+  .route-bg{background-position:center;background-size:auto 100%}
+  .route-card{left:calc(var(--u)*1);right:calc(var(--u)*1);bottom:calc(var(--u)*1);width:auto;padding:calc(var(--u)*.9)}
+  .route-card h2{font-size:calc(var(--u)*1.7)}
+  .route-card .rc-sub{font-size:calc(var(--u)*1)}
+  .route-node{width:calc(var(--u)*3.2);height:calc(var(--u)*3.2)}
+  .route-node.current{width:calc(var(--u)*4.2);height:calc(var(--u)*4.2)}
+  .route-node.done{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4)}
+  .route-node .step{display:none}
+  .route-hero{width:calc(var(--u)*3.8);height:calc(var(--u)*4.6)}
 }
 </style>
 </head>
@@ -398,6 +464,36 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
       <div id="tray"><div class="tiles"></div></div>
     </div>
   </div>
+  <section id="route" class="scr hide" aria-label="冒险路线">
+    <div class="route-bg"></div>
+    <header class="route-head">
+      <div class="route-title">冒险路线</div>
+      <div class="route-meta">
+        <span><b id="routeLevel">第 1 关</b></span>
+        <span>拼读进度 <b id="routeProgress">0 / 0</b></span>
+        <span class="route-gear"><span class="gear-icon" id="routeWeaponIcon">🪵</span><span id="routeWeaponName">木剑</span></span>
+      </div>
+      <button class="route-exit" id="bRouteMenu">选择关卡</button>
+    </header>
+    <div class="route-stage" id="routeStage">
+      <svg id="routeSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="route-track-shadow" id="routePathShadow"></path>
+        <path class="route-track" id="routePath"></path>
+        <path class="route-track-done" id="routePathDone"></path>
+      </svg>
+      <div id="routeNodes"></div>
+      <div class="route-hero" id="routeHero" aria-label="探险家">
+        <div class="rh-head"><img id="routeHeroFace" alt=""></div><div class="rh-body"></div>
+      </div>
+      <div class="route-chest hide" id="routeChest" aria-label="终点宝箱"><span class="lid"></span><span class="body"></span><span class="lock"></span></div>
+      <aside class="route-card">
+        <h2 id="routeCardTitle">当前遭遇</h2>
+        <div class="rc-name" id="routeCardName">第 1 个怪物</div>
+        <div class="rc-sub" id="routeCardSub">准备好后进入战斗，完成一次拼读。</div>
+        <button class="btn orange" id="bEnterBattle">进入战斗</button>
+      </aside>
+    </div>
+  </section>
   <div id="fx"></div>
   <div id="flash"></div>
   <div id="count" class="hide"></div>
@@ -446,10 +542,10 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
       <li>开始时选择<b>英文自然拼读</b>或<b>汉语拼音</b>。拼音题使用开源 pinyin-chart 数据，按声母、韵母和声调组合音节。</li>
       <li>英文保留原有词库；拼音共 10 关。每关可选 10 或 20 题，题目会随机打乱。</li>
       <li>探险家沿着道路前进，遇到随机怪物后答题。英文逐字母拼词，拼音依次选择<b>声母、韵母、声调</b>。</li>
-      <li>第一关只有<b>木剑</b>。每关通关都会获得宝箱，打开后得到两件武器；已解锁武器会保存在本机。</li>
+      <li>第一关只有<b>木剑</b>。完成整条路线后终点才会出现宝箱，打开后得到两件武器；自动装备的奖励会带到下一关。</li>
       <li>答题太慢时，怪物会逼近并攻击。探险家有<b>三滴血</b>，血量耗尽后本关必须重新开始。</li>
       <li>打击特效：爆破方块命中会<b>爆炸</b>并轻微震屏，火焰弹命中怪物后会<b>着火</b>，毒药瓶冒绿雾，水晶镐崩出石屑。</li>
-      <li>每完成一个拼读，探险家会继续向前；每完成五题，宝箱会出现在道路尽头，走过去即可领取武器。</li>
+      <li>每完成一个拼读会返回路线概览，探险家前进到下一个怪物所在地，再进入战斗详情继续练习。</li>
       <li>点错不直接扣命，但不会重置怪物逼近计时。同一位置错两次会自动亮出正确答案。</li>
       <li>右上角工具：<b>提示</b>闪下一个字母，<b>朗读</b>再读一遍，<b>音效</b>开关，<b>暂停</b>，<b>全屏</b>。</li>
       <li>快捷键：<kbd>字母键</kbd> 选字母 · <kbd>H</kbd> 提示 · <kbd>R</kbd> 朗读 · <kbd>Esc</kbd> 暂停</li>
@@ -747,20 +843,22 @@ var VOWELS='aeiou';
 
 /* ---------------- 存档 ---------------- */
 var SAVE_KEY='voxel-phonics-v1';
-var save={stars:{english:{},pinyin:{}},unlocked:{english:['wood'],pinyin:['wood']},seen:{english:{},pinyin:{}},snd:true,len:20};
+var save={stars:{english:{},pinyin:{}},unlocked:{english:['wood'],pinyin:['wood']},equipped:{english:'wood',pinyin:'wood'},seen:{english:{},pinyin:{}},snd:true,len:20};
 try{
   var s0=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');
   if(s0&&typeof s0==='object'){
     var oldStars=s0.stars||{};
     if(!oldStars.english&&!oldStars.pinyin)oldStars={english:oldStars,pinyin:{}};
     save={stars:{english:oldStars.english||{},pinyin:oldStars.pinyin||{}},
-      unlocked:s0.unlocked||{english:['wood'],pinyin:['wood']},seen:s0.seen||{english:{},pinyin:{}},
+      unlocked:s0.unlocked||{english:['wood'],pinyin:['wood']},equipped:s0.equipped||{english:'wood',pinyin:'wood'},seen:s0.seen||{english:{},pinyin:{}},
       snd:s0.snd!==false,len:(s0.len===10?10:20)};
   }
 }catch(e){}
 ['english','pinyin'].forEach(function(m){
   if(!save.stars[m])save.stars[m]={};
   if(!save.unlocked[m]||!save.unlocked[m].length)save.unlocked[m]=['wood'];
+  if(!save.equipped)save.equipped={english:'wood',pinyin:'wood'};
+  if(!save.equipped[m]||save.unlocked[m].indexOf(save.equipped[m])<0)save.equipped[m]='wood';
   if(!save.seen[m])save.seen[m]={};
   if(save.unlocked[m].indexOf('wood')<0)save.unlocked[m].unshift('wood');
 });
@@ -1389,6 +1487,10 @@ function nextWeapon(){
   }
   if(G.li===0){lastWeapon='wood';return WMAP.wood;}
   var have=unlockedWeapons();
+  var equipped=save.equipped&&save.equipped[APP_MODE];
+  if(equipped&&have.indexOf(equipped)>=0&&WMAP[equipped]){
+    lastWeapon=equipped;return WMAP[equipped];
+  }
   var pool=WEAPONS.filter(function(w){return have.indexOf(w.id)>=0&&w.id!==lastWeapon;});
   if(!pool.length)pool=WEAPONS.filter(function(w){return have.indexOf(w.id)>=0;});
   var w=pick(pool);
@@ -2037,14 +2139,15 @@ var G={scr:'title',li:0,wi:0,pos:0,mistakes:0,posMiss:0,locked:true,paused:false
        word:'',character:'',gloss:'',emoji:'',tiles:[],monster:null,words:[],idleT:0,startT:0,levelMist:0,total:0,
        helpBack:'title',blocks:[],wordGrp:null,card:null,cardOffX:0,cardOffXT:0,wordW:0,mobKind:'',weapon:null,
        roundWords:null,tokens:[],tokenTypes:[],spoken:'',hp:3,threatT:0,attacking:false,
-       heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false,canUseUnlocked:false};
+       heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false,canUseUnlocked:false,
+       mobRoute:[],routeChestClaimed:false};
 var HERO_ROUTE_START=-4.35,HERO_ROUTE_END=2.4,ROUTE_SPEED=3.2;
 var MON_TARGET_X=2.15,MON_ATTACK_X=-2.65,MON_Z=2.65,MON_SPAWN_X=9.0,MON_SPEED=6.2,ATTACK_AFTER=9;
 
 function setScreen(name){
   G.scr=name;
   var only=name==='play'?'__none__':name;
-  ['title','mode','levels','intro','help','result','pause','gameover'].forEach(function(k){
+  ['title','mode','levels','intro','help','route','result','pause','gameover'].forEach(function(k){
     var el=document.getElementById(k);
     if(el)el.classList.toggle('hide',k!==only);
   });
@@ -2097,7 +2200,7 @@ function openIntro(i){
     '<div class="isub">规则：'+L.tag+' · '+modeLine+' · 本轮随机 '+save.len+' 个</div>'+
     '<div class="rulebox" style="margin-top:calc(var(--u)*.85)">'+L.rule+'</div>'+
     '<div class="wchips">'+chips+'</div>'+
-    '<div class="idesc">'+desc+'<br>第一关只有木剑，通关开宝箱后会获得两件武器。</div>'+
+    '<div class="idesc">'+desc+'<br>先在路线图找到怪物，再进入战斗完成拼读。整关完成后才会出现宝箱，奖励会带到下一关。</div>'+
     '<div class="btns"><button class="btn green" id="bGo">开始闯关</button>'+
     '<button class="btn ghost" id="bIntroBack">返回</button></div>';
   $('#bGo').onclick=function(){startLevel(i,true);};
@@ -2136,6 +2239,7 @@ function switchWeapon(id){
   if(!w||!G.weapon||have.indexOf(id)<0||G.attacking)return;
   if(G.weapon.id===id){sfx('tap');return;}
   G.weapon=w;lastWeapon=id;
+  save.equipped[APP_MODE]=id;persist();
   equipWeapon(id);
   syncWeaponUI();
   var m=G.monster;
@@ -2166,6 +2270,93 @@ function shuffleWords(list,li){
   firstSeen[fk]=a[0][0];
   return a;
 }
+function makeMobRoute(n){
+  var out=[],prev='';
+  for(var i=0;i<n;i++){
+    var pool=MOB_KINDS.filter(function(k){return k!==prev;});
+    var kind=pick(pool);out.push(kind);prev=kind;
+  }
+  return out;
+}
+var routeTO=null;
+function routePathD(){
+  if(window.innerHeight>window.innerWidth){
+    return 'M 22 67 C 75 70 82 58 52 54 C 18 50 18 38 50 35 C 82 32 80 20 53 17 C 38 14 46 9 73 8';
+  }
+  return 'M 7 86 C 31 89 62 88 67 75 C 72 62 54 57 31 58 C 8 59 11 43 28 37 C 45 31 70 37 82 27 C 90 20 86 14 83 10';
+}
+function routeNodeFraction(i){
+  if(G.total<=1)return .46;
+  return .035+(i/(G.total-1))*.86;
+}
+function placeOnRoute(el,f){
+  var path=$('#routePath');if(!path||!el)return;
+  var len=path.getTotalLength(),p=path.getPointAtLength(Math.max(0,Math.min(1,f))*len);
+  el.style.left=p.x+'%';el.style.top=p.y+'%';
+}
+function routeMonsterLabel(i){
+  var kind=G.mobRoute[i]||'mossling';
+  return '第 '+(i+1)+' 个怪物 · '+(MOB_NAME[kind]||'方块怪');
+}
+function renderRouteMap(moveForward){
+  clearTimeout(routeTO);clearBoard();setScreen('route');
+  var d=routePathD();
+  ['#routePathShadow','#routePath','#routePathDone'].forEach(function(id){var p=$(id);p.setAttribute('d',d);p.setAttribute('pathLength','1');});
+  $('#routeLevel').textContent='第 '+(G.li+1)+' 关 · '+LEVELS[G.li].name;
+  $('#routeProgress').textContent=Math.min(G.wi,G.total)+' / '+G.total;
+  $('#routeWeaponIcon').textContent=G.weapon?G.weapon.icon:'🪵';
+  $('#routeWeaponName').textContent=G.weapon?G.weapon.name:'木剑';
+  var box=$('#routeNodes');box.innerHTML='';
+  for(var i=0;i<G.total;i++){
+    var n=document.createElement('div'),kind=G.mobRoute[i]||'mossling';
+    n.className='route-node'+(i<G.wi?' done':(i===G.wi?' current':''));n.dataset.kind=kind;
+    n.innerHTML='<span class="mn"></span><span class="step">'+(i+1)+'</span>';
+    box.appendChild(n);placeOnRoute(n,routeNodeFraction(i));
+  }
+  var done=Math.min(1,G.wi/Math.max(1,G.total));
+  $('#routePathDone').style.strokeDasharray=done+' 1';
+  var heroEl=$('#routeHero'),target=G.wi>=G.total?1:routeNodeFraction(G.wi);
+  var start=target;
+  if(moveForward&&G.wi>0)start=G.wi>=G.total?routeNodeFraction(G.total-1):routeNodeFraction(G.wi-1);
+  heroEl.classList.toggle('moving',!!moveForward);placeOnRoute(heroEl,start);
+  if(moveForward){
+    void heroEl.offsetWidth;
+    requestAnimationFrame(function(){placeOnRoute(heroEl,target);});
+  }
+  var chest=$('#routeChest'),button=$('#bEnterBattle');
+  chest.classList.add('hide');chest.classList.remove('open');
+  if(G.wi>=G.total){
+    placeOnRoute(chest,1);chest.classList.remove('hide');
+    $('#routeCardTitle').textContent='路线完成';
+    $('#routeCardName').textContent='终点宝箱已经出现';
+    $('#routeCardSub').textContent='探险家正在前往终点。宝箱奖励会自动装备，并带到下一关。';
+    button.disabled=true;button.textContent='前往宝箱…';
+    routeTO=setTimeout(claimRouteChest,moveForward?1850:350);
+  }else{
+    $('#routeCardTitle').textContent=moveForward?'继续前进':'当前遭遇';
+    $('#routeCardName').textContent=routeMonsterLabel(G.wi);
+    $('#routeCardSub').textContent=moveForward?'探险家正在沿路线前往下一个怪物。':'准备好后进入战斗，完成一次拼读。';
+    button.disabled=!!moveForward;button.textContent=moveForward?'前往下一个怪物…':'进入战斗';
+    if(moveForward)routeTO=setTimeout(enterBattle,1900);
+  }
+}
+function relayoutRouteMap(){
+  if(G.scr!=='route')return;
+  var d=routePathD();
+  ['#routePathShadow','#routePath','#routePathDone'].forEach(function(id){$(id).setAttribute('d',d);});
+  $$('#routeNodes .route-node').forEach(function(n,i){placeOnRoute(n,routeNodeFraction(i));});
+  placeOnRoute($('#routeHero'),G.wi>=G.total?1:routeNodeFraction(G.wi));
+  var chest=$('#routeChest');if(chest&&!chest.classList.contains('hide'))placeOnRoute(chest,1);
+}
+function enterBattle(){
+  clearTimeout(routeTO);
+  if(G.wi>=G.total)return;
+  setScreen('play');
+  var c=$('#count');c.classList.remove('hide','go');void c.offsetWidth;
+  c.textContent='战斗！';c.classList.add('go');
+  setTimeout(function(){c.classList.add('hide');},1000);
+  spawnWord();
+}
 function startLevel(i,keepRound){
   unlockAudio();/* 关卡由点击进入，手势内解锁移动端音频 */
   clearBoard();
@@ -2174,10 +2365,11 @@ function startLevel(i,keepRound){
   G.roundWords=base;
   G.li=i;G.wi=0;G.mistakes=0;G.levelMist=0;G.paused=false;G.locked=true;G.done=false;
   G.hp=3;G.threatT=0;G.attacking=false;updateHealth();updateThreat();
-  G.heroTargetX=HERO_ROUTE_START;G.heroMoving=false;G.chest=null;G.chestAfterFinish=false;G.canUseUnlocked=false;
+  G.heroTargetX=HERO_ROUTE_START;G.heroMoving=false;G.chest=null;G.chestAfterFinish=false;G.canUseUnlocked=false;G.routeChestClaimed=false;
   if(hero){hero.userData.routeX=HERO_ROUTE_START;hero.position.x=HERO_ROUTE_START;}
   G.words=shuffleWords(base,i);
   G.total=G.words.length;
+  G.mobRoute=makeMobRoute(G.total);
   G.weapon=nextWeapon();
   equipWeapon(G.weapon.id);
   renderWeaponBar();
@@ -2187,14 +2379,8 @@ function startLevel(i,keepRound){
   if(chipM)chipM.textContent=LEVELS[i].name;
   $('#prog .num').textContent='0/'+G.total;
   $('#prog .fill').style.width='0%';
-  setScreen('play');
   G.startT=performance.now();
-  var c=$('#count');
-  c.classList.remove('hide','go');void c.offsetWidth;
-  c.textContent='GO!';c.classList.add('go');
-  setTimeout(function(){c.classList.add('hide');},1000);
-  spawnWord();
-  coach('探险家现在使用<b>'+G.weapon.name+'</b>。及时完成'+(APP_MODE==='pinyin'?'声母、韵母和声调':'单词')+'，别让怪物耗掉三滴血。',5600);
+  renderRouteMap(false);
 }
 
 function clearBoard(){
@@ -2217,12 +2403,13 @@ function spawnWord(entry){
   G.pos=0;G.posMiss=0;G.locked=true;G.idleT=0;G.threatT=0;G.attacking=false;G.done=false;updateThreat();
   G.letterSpeaking=false;G.pendingFinale=false;G.finaleFn=null;
 
-  var routeX=HERO_ROUTE_START+Math.min(G.wi*.48,HERO_ROUTE_END-HERO_ROUTE_START);
-  G.heroTargetX=routeX;G.heroMoving=Math.abs((hero&&hero.userData.routeX||HERO_ROUTE_START)-routeX)>.03;
+  var routeX=HERO_ROUTE_START;
+  G.heroTargetX=routeX;G.heroMoving=false;
+  if(hero){hero.userData.routeX=routeX;hero.position.x=routeX;}
 
-  var kind=pickKind();
+  var kind=G.mobRoute[G.wi]||pickKind();
   var m=buildMob(kind);
-  var monsterX=Math.min(MON_SPAWN_X,routeX+3.15);
+  var monsterX=(G.weapon&&G.weapon.mode==='melee')?G.weapon.dist:MON_TARGET_X;
   m.position.set(kind==='blinkshade'?monsterX+1.2:monsterX,0,MON_Z);
   m.rotation.y=-0.6;
   m.userData.state=kind==='blinkshade'?'teleportIn':'wait';
@@ -2259,7 +2446,12 @@ function spawnWord(entry){
   buildSlots();
   dealTiles();
   updateProgress();
-  startSayLoop();
+  if(APP_MODE==='pinyin'){
+    var spokenCharacter=G.character,spokenIndex=G.wi;
+    setTimeout(function(){
+      if(G.scr==='play'&&G.wi===spokenIndex&&G.character===spokenCharacter&&!G.done)ttsSpeak(spokenCharacter,.82);
+    },320);
+  }else startSayLoop();
 }
 
 /* ---------------- 槽位与字母 ---------------- */
@@ -2553,45 +2745,31 @@ function nextWord(){
   clearBoard();
   G.wi++;
   updateProgress();
-  if(G.wi>=G.total){
-    if(G.wi%5===0)spawnRoadChest(true);else finishLevel();
-    return;
-  }
-  if(G.wi%5===0)spawnRoadChest(false);else spawnWord();
+  renderRouteMap(true);
 }
 function updateProgress(){
   $('#prog .num').textContent=G.wi+'/'+G.total;
   $('#prog .fill').style.width=Math.round(G.wi/G.total*100)+'%';
 }
 
-function buildRoadChest(){
-  var g=new T.Group();
-  var wood=new T.MeshLambertMaterial({color:0xa96722}),top=new T.MeshLambertMaterial({color:0xc47d2e}),lock=new T.MeshLambertMaterial({color:0xf2c33f,emissive:0x6b4800});
-  var body=new T.Mesh(new T.BoxGeometry(.9,.48,.7),wood);body.position.y=.36;g.add(body);
-  var lid=new T.Mesh(new T.BoxGeometry(.94,.18,.74),top);lid.position.y=.69;g.add(lid);
-  var clasp=new T.Mesh(new T.BoxGeometry(.16,.26,.08),lock);clasp.position.set(0,.5,.38);g.add(clasp);
-  g.userData.lid=lid;g.userData.opening=false;g.position.set(HERO_ROUTE_END+.85,.02,MON_Z);scene.add(g);return g;
-}
-function spawnRoadChest(afterFinish){
-  G.chest=buildRoadChest();G.chestAfterFinish=afterFinish;G.locked=true;G.threatT=0;G.attacking=false;updateThreat();
-  G.heroTargetX=G.chest.position.x-1.25;
-  G.heroMoving=Math.abs((hero&&hero.userData.routeX||HERO_ROUTE_START)-G.heroTargetX)>.03;
-  coach('道路尽头出现宝箱，探险家走过去打开它！',3200);
-}
-function claimRoadChest(){
-  var chest=G.chest;if(!chest||!chest.userData.opening)return;
-  chest.userData.lid.rotation.x=-.72;chest.userData.opened=true;sfx('win');
+function claimRouteChest(){
+  if(G.routeChestClaimed||G.wi<G.total)return;
+  G.routeChestClaimed=true;
+  var chest=$('#routeChest');chest.classList.add('open');sfx('win');
   var got=chestRewards();
   var autoWeapon=got.items[0];
   if(autoWeapon){
     G.canUseUnlocked=true;G.weapon=autoWeapon;lastWeapon=autoWeapon.id;equipWeapon(autoWeapon.id);
+    save.equipped[APP_MODE]=autoWeapon.id;persist();
   }
   renderWeaponBar();
+  $('#routeWeaponIcon').textContent=G.weapon.icon;$('#routeWeaponName').textContent=G.weapon.name;
+  $('#routeCardTitle').textContent='宝箱已打开';
+  $('#routeCardName').textContent='获得 '+got.items.map(function(w){return w.name;}).join('、');
+  $('#routeCardSub').textContent=(autoWeapon?'已自动装备 '+autoWeapon.name+'。':'')+'这些装备已保存，下一关可以继续使用。';
+  $('#bEnterBattle').textContent='正在结算…';
   toast('good','宝箱获得：<b>'+got.items.map(function(w){return w.name;}).join('、')+'</b>'+(autoWeapon?' · 已装备 '+autoWeapon.name:''));
-  setTimeout(function(){
-    if(G.chest){scene.remove(G.chest);G.chest=null;}
-    G.chestAfterFinish?finishLevel():spawnWord();
-  },2500);
+  setTimeout(finishLevel,2500);
 }
 
 /* ---------------- 结算 ---------------- */
@@ -2833,6 +3011,7 @@ function layout(){
   camera.lookAt(0,cy-2.25,cz-9.74);
   camera.updateProjectionMatrix();
   shakeT=0;
+  if(G.scr==='route')requestAnimationFrame(relayoutRouteMap);
 }
 window.addEventListener('resize',layout);
 
@@ -2850,9 +3029,6 @@ function update(dt,t){
     if(G.scr==='play'&&!G.heroMoving&&G.monster&&G.monster.userData.state==='wait'&&G.locked){
       G.monster.userData.arrived=true;G.locked=false;paintSlots();
       coach('探险家到达战斗点，把 <b>'+(APP_MODE==='pinyin'?G.character:G.word)+'</b> 的'+(APP_MODE==='pinyin'?'拼音':'字母')+'按顺序点出来。',3000);
-    }
-    if(G.scr==='play'&&!G.heroMoving&&G.chest&&!G.chest.userData.opening){
-      G.chest.userData.opening=true;setTimeout(claimRoadChest,1500);
     }
     var hd=su.head;
     hd.position.y=1.75+Math.sin(t*1.5)*.016;
@@ -3105,6 +3281,8 @@ function bind(){
   $('#bPinyin').onclick=function(){chooseMode('pinyin');};
   $('#bModeBack').onclick=function(){setScreen('title');};
   $('#bBackTitle').onclick=function(){setScreen('mode');};
+  $('#bEnterBattle').onclick=function(){if(!this.disabled)enterBattle();};
+  $('#bRouteMenu').onclick=function(){clearTimeout(routeTO);clearBoard();renderLevels();setScreen('levels');};
   $('#bHelp').onclick=function(){G.helpBack='title';setScreen('help');};
   $('#bHelpOk').onclick=function(){setScreen(G.helpBack||'title');};
   $('#bTip').onclick=function(){hintTile();sfx('tap');};
@@ -3172,6 +3350,8 @@ function boot(){
   setScreen('title');
   var av=$('#coachAV');
   if(av&&TX.heroFace&&TX.heroFace.image)av.src=TX.heroFace.image.toDataURL();
+  var rav=$('#routeHeroFace');
+  if(rav&&TX.heroFace&&TX.heroFace.image)rav.src=TX.heroFace.image.toDataURL();
   tick();
   setTimeout(function(){
     var l=$('#load');
