@@ -76,5 +76,8 @@ if (!template.includes('function submitMathAnswer()') || !template.includes("Num
 if (!template.includes('id="mathKeys"') || !template.includes('data-digit="0"') || !template.includes('data-digit="9"') || !template.includes('function useMathKey(button)')) {
   throw new Error('The on-screen math keypad must include digits 0 through 9');
 }
+if (!template.includes('MATH_ATTACK_AFTER=15') || !template.includes("APP_MODE==='math'?MATH_ATTACK_AFTER:ATTACK_AFTER")) {
+  throw new Error('Math battles must use the 15-second attack timer');
+}
 
 console.log(`Checks passed: ${scripts.length} scripts, ${chart.length} pinyin entries, no banned identifiers`);

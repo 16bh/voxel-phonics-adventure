@@ -2234,7 +2234,8 @@ var G={scr:'title',li:0,wi:0,pos:0,mistakes:0,posMiss:0,locked:true,paused:false
        heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false,canUseUnlocked:false,
        mobRoute:[],routeChestClaimed:false};
 var HERO_ROUTE_START=-4.35,HERO_ROUTE_END=2.4,ROUTE_SPEED=3.2;
-var MON_TARGET_X=2.15,MON_ATTACK_X=-2.65,MON_Z=2.65,MON_SPAWN_X=9.0,MON_SPEED=6.2,ATTACK_AFTER=9;
+var MON_TARGET_X=2.15,MON_ATTACK_X=-2.65,MON_Z=2.65,MON_SPAWN_X=9.0,MON_SPEED=6.2,ATTACK_AFTER=9,MATH_ATTACK_AFTER=15;
+function currentAttackAfter(){return APP_MODE==='math'?MATH_ATTACK_AFTER:ATTACK_AFTER;}
 
 function setScreen(name){
   G.scr=name;
@@ -3018,7 +3019,7 @@ function updateHealth(){
 }
 function updateThreat(){
   var el=$('#threat'),fill=$('#threat .fill');if(!el||!fill)return;
-  var p=Math.max(0,Math.min(1,G.threatT/ATTACK_AFTER));fill.style.width=Math.round(p*100)+'%';
+  var p=Math.max(0,Math.min(1,G.threatT/currentAttackAfter()));fill.style.width=Math.round(p*100)+'%';
   el.classList.toggle('hot',p>=.55&&p<.82);el.classList.toggle('danger',p>=.82);
 }
 function setMobOpacity(m,a){
@@ -3388,7 +3389,7 @@ function update(dt,t){
   if(!G.locked&&G.scr==='play'&&!G.paused){
     G.idleT+=dt;G.threatT+=dt;updateThreat();
     if(G.idleT>5){G.idleT=0;hintTile();}
-    if(G.threatT>=ATTACK_AFTER)beginMonsterAttack();
+    if(G.threatT>=currentAttackAfter())beginMonsterAttack();
   }
   updateFinale(dt,t);
 }
