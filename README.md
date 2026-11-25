@@ -38,6 +38,14 @@ npm test
 
 构建脚本会把 `data/pinyin-chart-syllables.json` 嵌入 `src/game.template.html`，生成根目录的 `index.html`。测试会检查内联脚本语法、拼音数据条数、构建占位符和公开版禁用标识。
 
+需要生成对外分享文件时，使用专用导出命令：
+
+```bash
+npm run export:share -- --output-dir /path/to/output
+```
+
+导出脚本会扫描目标目录已有版本，自动生成下一个文件，例如 `方块拼读大作战_开源版_v14.html`；已有版本不会被覆盖。
+
 ## 目录结构
 
 ```text
@@ -47,6 +55,7 @@ npm test
 ├── data/pinyin-chart-syllables.json   # 拼音数据
 ├── scripts/build.mjs                  # 构建脚本
 ├── scripts/check.mjs                  # 静态检查
+├── scripts/export-share.mjs           # 自动递增版本号的分享版导出脚本
 ├── third_party/                       # 第三方许可证
 └── docs/                              # 截图
 ```
