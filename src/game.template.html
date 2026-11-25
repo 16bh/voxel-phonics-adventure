@@ -167,6 +167,19 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
 .tile.hint::after{content:"";position:absolute;inset:0;border:calc(var(--u)*.24) solid #ffe14a}
 @keyframes tileHint{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--u)*-.4))}}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+#mathPad{display:flex;align-items:stretch;gap:calc(var(--u)*.55);padding:calc(var(--u)*.65);
+  background:#5c5c5c;box-shadow:inset calc(var(--u)*.25) calc(var(--u)*.25) 0 #8f8f8f,inset calc(var(--u)*-.25) calc(var(--u)*-.25) 0 #2b2b2b,0 0 0 calc(var(--u)*.18) var(--line),0 calc(var(--u)*.5) 0 rgba(0,0,0,.35)}
+.math-expression{display:flex;align-items:center;justify-content:center;min-width:calc(var(--u)*11);padding:0 calc(var(--u)*.5);background:#363636;color:#fff;
+  font:900 calc(var(--u)*2.15)/1 var(--num);white-space:nowrap;text-shadow:calc(var(--u)*.12) calc(var(--u)*.12) 0 #111;
+  box-shadow:inset calc(var(--u)*.18) calc(var(--u)*.18) 0 #666,inset calc(var(--u)*-.18) calc(var(--u)*-.18) 0 #111}
+#mathAnswer{pointer-events:auto;width:calc(var(--u)*13);height:calc(var(--u)*5.1);border:0;border-radius:0;background:#f4f0e2;color:#252525;
+  font:900 calc(var(--u)*3.1)/1 var(--num);text-align:center;outline:none;user-select:text;-webkit-user-select:text;
+  box-shadow:inset calc(var(--u)*.25) calc(var(--u)*.25) 0 #8b8b8b,inset calc(var(--u)*-.25) calc(var(--u)*-.25) 0 #fff,0 0 0 calc(var(--u)*.18) #111}
+#mathAnswer:focus{box-shadow:inset calc(var(--u)*.25) calc(var(--u)*.25) 0 #8b8b8b,inset calc(var(--u)*-.25) calc(var(--u)*-.25) 0 #fff,0 0 0 calc(var(--u)*.3) #ffe14a}
+#mathAnswer:disabled{color:#777;background:#c8c4b9}
+#mathAnswer.wrong{animation:shake .38s;box-shadow:inset calc(var(--u)*.25) calc(var(--u)*.25) 0 #8b8b8b,inset calc(var(--u)*-.25) calc(var(--u)*-.25) 0 #fff,0 0 0 calc(var(--u)*.3) #ff6a4d}
+#bMathSubmit{min-width:calc(var(--u)*12)}
+.math-mode #slots,.math-mode #tray{display:none}
 
 /* ---------- coach ---------- */
 #coach{position:absolute;left:calc(var(--u)*1);top:calc(var(--u)*7.6);display:flex;align-items:flex-start;gap:calc(var(--u)*.45);
@@ -228,7 +241,7 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
 
 /* mode select */
 #mode .panel{width:min(calc(var(--u)*74),92vw);display:flex;flex-direction:column;align-items:center}
-.mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(var(--u)*1.3);width:100%;margin-top:calc(var(--u)*1.3)}
+.mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(var(--u)*1.3);width:100%;margin-top:calc(var(--u)*1.3)}
 .mode-choice{border:0;cursor:pointer;background:#8b8b8b;color:#fff;min-height:calc(var(--u)*17);padding:calc(var(--u)*1.5);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*.5);
   box-shadow:inset calc(var(--u)*.3) calc(var(--u)*.3) 0 #c9c9c9,inset calc(var(--u)*-.3) calc(var(--u)*-.3) 0 #4a4a4a,0 0 0 calc(var(--u)*.24) #111,0 calc(var(--u)*.55) 0 rgba(0,0,0,.35)}
@@ -238,6 +251,8 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
 .mode-choice span{font-size:calc(var(--u)*1.15);font-weight:800;color:#f4ead2;text-align:center}
 .mode-choice.py{background:#4f8b38;box-shadow:inset calc(var(--u)*.3) calc(var(--u)*.3) 0 #86c968,inset calc(var(--u)*-.3) calc(var(--u)*-.3) 0 #28551d,0 0 0 calc(var(--u)*.24) #111,0 calc(var(--u)*.55) 0 rgba(0,0,0,.35)}
 .mode-choice.py:hover{background:#5da243}
+.mode-choice.math{background:#3f6fbd;box-shadow:inset calc(var(--u)*.3) calc(var(--u)*.3) 0 #7aa5e8,inset calc(var(--u)*-.3) calc(var(--u)*-.3) 0 #22437a,0 0 0 calc(var(--u)*.24) #111,0 calc(var(--u)*.55) 0 rgba(0,0,0,.35)}
+.mode-choice.math:hover{background:#4b82d4}
 
 /* chest / game over / finale */
 .reward-zone{display:flex;flex-direction:column;align-items:center;min-height:calc(var(--u)*12);margin:calc(var(--u)*.45) 0}
@@ -462,6 +477,11 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
     <div id="play">
       <div id="slots"></div>
       <div id="tray"><div class="tiles"></div></div>
+      <div id="mathPad" class="hide">
+        <div class="math-expression" id="mathInline">7 + 5 =</div>
+        <input id="mathAnswer" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" aria-label="填写数字答案" placeholder="?">
+        <button class="btn orange" id="bMathSubmit">提交答案</button>
+      </div>
     </div>
   </div>
   <section id="route" class="scr hide" aria-label="冒险路线">
@@ -470,7 +490,7 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="route-title">冒险路线</div>
       <div class="route-meta">
         <span><b id="routeLevel">第 1 关</b></span>
-        <span>拼读进度 <b id="routeProgress">0 / 0</b></span>
+        <span><span id="routeProgressLabel">拼读进度</span> <b id="routeProgress">0 / 0</b></span>
         <span class="route-gear"><span class="gear-icon" id="routeWeaponIcon">🪵</span><span id="routeWeaponName">木剑</span></span>
       </div>
       <button class="route-exit" id="bRouteMenu">选择关卡</button>
@@ -506,16 +526,17 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
       <div class="tbtns"><button class="btn green go" id="bStart">开始游戏</button><button class="btn ghost" id="bHelp">家长看这里</button></div>
     </div>
     <button class="ib ia fsb" id="bFull2"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="3"/><rect x="3" y="3" width="3" height="7"/><rect x="14" y="3" width="7" height="3"/><rect x="18" y="3" width="3" height="7"/><rect x="3" y="18" width="7" height="3"/><rect x="3" y="14" width="3" height="7"/><rect x="14" y="18" width="7" height="3"/><rect x="18" y="14" width="3" height="7"/></svg><span>全屏</span></button>
-    <div class="foot">选择<b>英文</b>或<b>拼音</b>闯关，及时答题阻止怪物逼近，开宝箱解锁武器，最终进入虚空挑战虚空龙</div>
+    <div class="foot">选择<b>英文、拼音或数学</b>闯关，及时答题阻止怪物逼近，开宝箱解锁武器，最终进入虚空挑战虚空龙</div>
     <div class="credit">开源学习游戏<br>MIT License<br>拼音数据：pinyin-chart</div>
   </section>
 
   <section id="mode" class="scr dim hide"><div class="panel">
     <div class="ititle">选择学习模式</div>
-    <div class="isub">两套进度分别保存，武器也分别解锁</div>
+    <div class="isub">三套进度分别保存，武器也分别解锁</div>
     <div class="mode-grid">
       <button class="mode-choice" id="bEnglish"><span class="mi">ABC</span><b>英文自然拼读</b><span>按字母顺序拼出英文单词</span></button>
       <button class="mode-choice py" id="bPinyin"><span class="mi">ā</span><b>汉语拼音</b><span>组合声母、韵母和声调</span></button>
+      <button class="mode-choice math" id="bMath"><span class="mi">7+5</span><b>100 以内数学</b><span>填写加减法的数字答案</span></button>
     </div>
     <div class="btns"><button class="btn ghost small" id="bModeBack">返回标题</button></div>
   </div></section>
@@ -523,7 +544,7 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
   <section id="levels" class="scr dim hide">
     <div class="h1"><span id="modeName">英文自然拼读</span> · 选择关卡</div>
     <div class="cfg">
-      <div class="crow"><span class="clab">每组词量</span>
+      <div class="crow"><span class="clab" id="roundSizeLabel">每组词量</span>
         <div class="opts" id="lenSel">
           <button class="opt" data-v="10">10 词</button>
           <button class="opt" data-v="20">20 词</button>
@@ -539,13 +560,14 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
   <section id="help" class="scr dim hide"><div class="panel" style="max-width:calc(var(--u)*62)">
     <div class="ititle">家长看这里</div>
     <ul class="help">
-      <li>开始时选择<b>英文自然拼读</b>或<b>汉语拼音</b>。拼音题使用开源 pinyin-chart 数据，按声母、韵母和声调组合音节。</li>
-      <li>英文保留原有词库；拼音共 10 关。每关可选 10 或 20 题，题目会随机打乱。</li>
-      <li>探险家沿着道路前进，遇到随机怪物后答题。英文逐字母拼词，拼音依次选择<b>声母、韵母、声调</b>。</li>
+      <li>开始时选择<b>英文自然拼读、汉语拼音或 100 以内数学</b>。三套模式的进度和装备分别保存。</li>
+      <li>英文保留原有词库；拼音和数学各 10 关。每关可选 10 或 20 题，题目会随机打乱。</li>
+      <li>探险家沿着道路前进，遇到随机怪物后答题。英文逐字母拼词，拼音依次选择<b>声母、韵母、声调</b>，数学填写加减法的数字答案。</li>
+      <li>数学题保证答案在 0 到 100 之间，减法不会出现负数；每场战斗随机出一道题。</li>
       <li>第一关只有<b>木剑</b>。完成整条路线后终点才会出现宝箱，打开后得到两件武器；自动装备的奖励会带到下一关。</li>
       <li>答题太慢时，怪物会逼近并攻击。探险家有<b>三滴血</b>，血量耗尽后本关必须重新开始。</li>
       <li>打击特效：爆破方块命中会<b>爆炸</b>并轻微震屏，火焰弹命中怪物后会<b>着火</b>，毒药瓶冒绿雾，水晶镐崩出石屑。</li>
-      <li>每完成一个拼读会返回路线概览，探险家前进到下一个怪物所在地，再进入战斗详情继续练习。</li>
+      <li>每完成一道题会返回路线概览，探险家前进到下一个怪物所在地，再进入战斗详情继续练习。</li>
       <li>点错不直接扣命，但不会重置怪物逼近计时。同一位置错两次会自动亮出正确答案。</li>
       <li>右上角工具：<b>提示</b>闪下一个字母，<b>朗读</b>再读一遍，<b>音效</b>开关，<b>暂停</b>，<b>全屏</b>。</li>
       <li>快捷键：<kbd>字母键</kbd> 选字母 · <kbd>H</kbd> 提示 · <kbd>R</kbd> 朗读 · <kbd>Esc</kbd> 暂停</li>
@@ -572,7 +594,7 @@ img{image-rendering:pixelated;image-rendering:crisp-edges}
     <div class="btns"><button class="btn orange" id="bRetry">重新闯关</button><button class="btn ghost" id="bFailMenu">选择关卡</button></div>
   </div></section>
   <div id="finaleHud" class="hide"><div class="banner"><b id="finaleTitle">虚空传送门已开启</b><span id="finaleText">探险家正在跳入传送门…</span></div></div>
-  <div id="finaleDone" class="hide"><div class="panel"><div class="dragon-title">虚空龙已消灭！</div><div class="isub">英文与拼音世界恢复了和平</div><div class="btns"><button class="btn green" id="bFinaleHome">返回主菜单</button></div></div></div>
+  <div id="finaleDone" class="hide"><div class="panel"><div class="dragon-title">虚空龙已消灭！</div><div class="isub">学习世界恢复了和平</div><div class="btns"><button class="btn green" id="bFinaleHome">返回主菜单</button></div></div></div>
 </div>
 <div id="load"><div class="sp"></div><div>正在生成方块世界…</div></div>
 
@@ -769,13 +791,47 @@ function makePinyinLevels(){
   });
 }
 var LEVELS_PINYIN=makePinyinLevels();
+function makeMathLevel(max,ops,tag,name,rule){
+  var groups=ops.map(function(op){return {g:op==='+'?'加法':'减法',w:[]};});
+  var seen={},guard=0,target=240;
+  while(guard++<8000&&groups.reduce(function(n,g){return n+g.w.length;},0)<target){
+    var gi=ri(0,ops.length-1),op=ops[gi],a=ri(0,max),b,answer;
+    if(op==='+'){b=ri(0,max-a);answer=a+b;}
+    else{b=ri(0,a);answer=a-b;}
+    var expression=a+' '+op+' '+b,key=expression+'='+answer;
+    if(seen[key])continue;seen[key]=true;
+    var digits=String(answer).split('');
+    groups[gi].w.push([String(answer),'🧮',expression+' = ?',digits,digits.map(function(){return 'number';}),expression]);
+  }
+  groups=groups.filter(function(g){return g.w.length;});
+  return _mkLevel({tag:tag,name:name,rule:rule,groups:groups});
+}
+function makeMathLevels(){
+  return [
+    makeMathLevel(10,['+'],'10 以内 +','10 以内加法','两个数相加，答案不超过 10。'),
+    makeMathLevel(10,['-'],'10 以内 -','10 以内减法','用较大的数减去较小的数，答案不小于 0。'),
+    makeMathLevel(20,['+'],'20 以内 +','20 以内加法','两个数相加，答案不超过 20。'),
+    makeMathLevel(20,['-'],'20 以内 -','20 以内减法','20 以内减法，答案不小于 0。'),
+    makeMathLevel(20,['+','-'],'20 以内 ±','20 以内加减','随机练习 20 以内加法和减法。'),
+    makeMathLevel(50,['+'],'50 以内 +','50 以内加法','两个数相加，答案不超过 50。'),
+    makeMathLevel(50,['-'],'50 以内 -','50 以内减法','50 以内减法，答案不小于 0。'),
+    makeMathLevel(50,['+','-'],'50 以内 ±','50 以内加减','随机练习 50 以内加法和减法。'),
+    makeMathLevel(100,['+'],'100 以内 +','100 以内加法','两个数相加，答案不超过 100。'),
+    makeMathLevel(100,['+','-'],'FINAL ±','100 以内综合','随机练习 100 以内加法和减法，守住三滴血到达终点。')
+  ];
+}
+var LEVELS_MATH=makeMathLevels();
 function applyMode(){
   if(APP_MODE==='pinyin')LEVELS=LEVELS_PINYIN;
+  else if(APP_MODE==='math')LEVELS=LEVELS_MATH;
   else applyBank();
 }
 var PER_ROUND=20;/* 兼容旧引用；实际每轮词量由 save.len 决定 */
 
-function questionKey(w){return String(w[0]||'').normalize('NFC').trim().toLowerCase();}
+function questionKey(w){
+  var value=APP_MODE==='math'?(w[6]||w[5]||w[2]||w[0]):w[0];
+  return String(value||'').normalize('NFC').trim().toLowerCase();
+}
 function seenQuestions(li){
   var modeSeen=save.seen[APP_MODE]||(save.seen[APP_MODE]={});
   return modeSeen[li]||(modeSeen[li]=[]);
@@ -839,25 +895,26 @@ function pickRound(L,li){
 }
 var LV_ART_EN=['🐷','🐸','🦆','🔔','🎂','🐄','🚗','💎','🌉'];
 var LV_ART_PY=['🔤','🪵','🛡️','⛏️','💎','🐍','🔥','🌊','🧭','🐉'];
+var LV_ART_MATH=['➕','➖','🔢','🧮','🎯','📐','🏗️','⚙️','💯','🏆'];
 var VOWELS='aeiou';
 
 /* ---------------- 存档 ---------------- */
 var SAVE_KEY='voxel-phonics-v1';
-var save={stars:{english:{},pinyin:{}},unlocked:{english:['wood'],pinyin:['wood']},equipped:{english:'wood',pinyin:'wood'},seen:{english:{},pinyin:{}},snd:true,len:20};
+var save={stars:{english:{},pinyin:{},math:{}},unlocked:{english:['wood'],pinyin:['wood'],math:['wood']},equipped:{english:'wood',pinyin:'wood',math:'wood'},seen:{english:{},pinyin:{},math:{}},snd:true,len:20};
 try{
   var s0=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');
   if(s0&&typeof s0==='object'){
     var oldStars=s0.stars||{};
     if(!oldStars.english&&!oldStars.pinyin)oldStars={english:oldStars,pinyin:{}};
-    save={stars:{english:oldStars.english||{},pinyin:oldStars.pinyin||{}},
-      unlocked:s0.unlocked||{english:['wood'],pinyin:['wood']},equipped:s0.equipped||{english:'wood',pinyin:'wood'},seen:s0.seen||{english:{},pinyin:{}},
+    save={stars:{english:oldStars.english||{},pinyin:oldStars.pinyin||{},math:oldStars.math||{}},
+      unlocked:s0.unlocked||{english:['wood'],pinyin:['wood'],math:['wood']},equipped:s0.equipped||{english:'wood',pinyin:'wood',math:'wood'},seen:s0.seen||{english:{},pinyin:{},math:{}},
       snd:s0.snd!==false,len:(s0.len===10?10:20)};
   }
 }catch(e){}
-['english','pinyin'].forEach(function(m){
+['english','pinyin','math'].forEach(function(m){
   if(!save.stars[m])save.stars[m]={};
   if(!save.unlocked[m]||!save.unlocked[m].length)save.unlocked[m]=['wood'];
-  if(!save.equipped)save.equipped={english:'wood',pinyin:'wood'};
+  if(!save.equipped)save.equipped={english:'wood',pinyin:'wood',math:'wood'};
   if(!save.equipped[m]||save.unlocked[m].indexOf(save.equipped[m])<0)save.equipped[m]='wood';
   if(!save.seen[m])save.seen[m]={};
   if(save.unlocked[m].indexOf('wood')<0)save.unlocked[m].unshift('wood');
@@ -996,7 +1053,7 @@ function ttsSpeak(text,rate,onEnd){
 function say(text,rate){return ttsSpeak((APP_MODE==='pinyin'&&G.spoken)?G.spoken:text,rate||.9);}
 function startSayLoop(){
   stopSayLoop();
-  if(APP_MODE==='pinyin')return;
+  if(APP_MODE!=='english')return;
   if(!sndOn||!window.speechSynthesis)return;
   sayActive=true;
   var myId=sayLoopId;
@@ -1897,17 +1954,25 @@ function picCard(emoji,gloss){
   x.fillStyle='#efe8d2';x.fillRect(9,9,W-18,104);
   x.fillStyle='#c9bda0';x.fillRect(9,113,W-18,58);
   x.fillStyle='#20140a';x.fillRect(9,113,W-18,3);
-  var e=document.createElement('canvas');e.width=32;e.height=32;
-  var ex=e.getContext('2d');
-  ex.textAlign='center';ex.textBaseline='middle';
-  ex.font=APP_MODE==='pinyin'?'900 20px "Segoe UI","PingFang SC",sans-serif':'30px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
-  ex.fillText(emoji,16,17);
-  x.imageSmoothingEnabled=false;
-  x.drawImage(e,25,14,90,90);
+  if(APP_MODE==='math'){
+    x.textAlign='center';x.textBaseline='middle';x.fillStyle='#2b1c0e';
+    x.font='900 '+(String(emoji).length>9?17:21)+'px "Segoe UI","Microsoft YaHei",sans-serif';
+    x.fillText(emoji,W/2,61);
+  }else{
+    var e=document.createElement('canvas');e.width=32;e.height=32;
+    var ex=e.getContext('2d');
+    ex.textAlign='center';ex.textBaseline='middle';
+    ex.font=APP_MODE==='pinyin'?'900 20px "Segoe UI","PingFang SC",sans-serif':'30px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+    ex.fillText(emoji,16,17);
+    x.imageSmoothingEnabled=false;
+    x.drawImage(e,25,14,90,90);
+  }
   x.textAlign='center';x.textBaseline='middle';
   x.fillStyle='#2b1c0e';
   if(APP_MODE==='pinyin'){
     x.font='900 15px "Microsoft YaHei","PingFang SC",sans-serif';x.fillText('选择正确拼音',W/2,144);
+  }else if(APP_MODE==='math'){
+    x.font='900 15px "Microsoft YaHei","PingFang SC",sans-serif';x.fillText('填写数字答案',W/2,144);
   }else{
     x.font='900 26px "Microsoft YaHei","PingFang SC",sans-serif';x.fillText(gloss,W/2,144);
   }
@@ -2136,7 +2201,7 @@ function buildTitleMob(){
 
 /* ---------------- 状态 ---------------- */
 var G={scr:'title',li:0,wi:0,pos:0,mistakes:0,posMiss:0,locked:true,paused:false,done:false,
-       word:'',character:'',gloss:'',emoji:'',tiles:[],monster:null,words:[],idleT:0,startT:0,levelMist:0,total:0,
+       word:'',character:'',mathExpression:'',gloss:'',emoji:'',tiles:[],monster:null,words:[],idleT:0,startT:0,levelMist:0,total:0,
        helpBack:'title',blocks:[],wordGrp:null,card:null,cardOffX:0,cardOffXT:0,wordW:0,mobKind:'',weapon:null,
        roundWords:null,tokens:[],tokenTypes:[],spoken:'',hp:3,threatT:0,attacking:false,
        heroTargetX:-4.35,heroMoving:false,chest:null,chestAfterFinish:false,canUseUnlocked:false,
@@ -2158,7 +2223,9 @@ function setScreen(name){
 
 /* ---------------- 关卡列表 ---------------- */
 function paintCfg(){
-  var modeName=$('#modeName');if(modeName)modeName.textContent=APP_MODE==='pinyin'?'汉语拼音':'英文自然拼读';
+  var modeName=$('#modeName');if(modeName)modeName.textContent=APP_MODE==='pinyin'?'汉语拼音':(APP_MODE==='math'?'100 以内数学':'英文自然拼读');
+  var sizeLabel=$('#roundSizeLabel');if(sizeLabel)sizeLabel.textContent=APP_MODE==='math'?'每组题量':'每组词量';
+  $$('#lenSel .opt').forEach(function(b){b.textContent=b.getAttribute('data-v')+(APP_MODE==='math'?' 题':' 词');});
   var rows=[['#lenSel',String(save.len)]];
   rows.forEach(function(r){
     var box=document.querySelector(r[0]);if(!box)return;
@@ -2170,7 +2237,7 @@ function paintCfg(){
 function renderLevels(){
   paintCfg();/* 设置条高亮与当前存档同步 */
   var g=$('#levels .grid');g.innerHTML='';
-  var starsByMode=modeStars(),arts=APP_MODE==='pinyin'?LV_ART_PY:LV_ART_EN;
+  var starsByMode=modeStars(),arts=APP_MODE==='pinyin'?LV_ART_PY:(APP_MODE==='math'?LV_ART_MATH:LV_ART_EN);
   LEVELS.forEach(function(L,i){
     var st=(starsByMode[i]||0);
     var d=document.createElement('div');
@@ -2179,7 +2246,7 @@ function renderLevels(){
       '<div class="art">'+arts[i%arts.length]+'</div>'+
       '<div class="t">'+L.name+'</div>'+
       '<div class="tag">'+L.tag+'</div>'+
-      '<div class="s">'+(APP_MODE==='pinyin'?'读音 ':'词库 ')+L.total+' · 每轮 '+save.len+'</div>'+
+      '<div class="s">'+(APP_MODE==='pinyin'?'读音 ':(APP_MODE==='math'?'算式 ':'词库 '))+L.total+' · 每轮 '+save.len+'</div>'+
       '<div class="stars">'+(st>0?('<b>'+'★★★'.slice(0,st)+'</b>'+'★★★'.slice(st)):'☆☆☆')+'</div>';
     d.onclick=function(){openIntro(i);};
     g.appendChild(d);
@@ -2192,15 +2259,16 @@ function openIntro(i){
   var L=LEVELS[i];
   var round=pickRound(L,i);
   G.roundWords=round;
-  var chips=round.map(function(w){return '<div class="wchip">'+w[1]+'<i>'+w[0]+'</i></div>';}).join('');
-  var modeLine=APP_MODE==='pinyin'?'模式：声母 + 韵母 + 声调':'模式：英文基础拼读';
-  var desc=APP_MODE==='pinyin'?'看汉字，按顺序选择<b>声母、韵母、声调</b>。答得太慢，怪物会逼近攻击。':'探险家沿着道路前进，遇到随机怪物后拼出单词。答得太慢，怪物会逼近攻击。';
+  var chips=round.map(function(w){return APP_MODE==='math'?'<div class="wchip">'+w[1]+'<i>'+w[6]+' = ?</i></div>':'<div class="wchip">'+w[1]+'<i>'+w[0]+'</i></div>';}).join('');
+  var modeLine=APP_MODE==='pinyin'?'模式：声母 + 韵母 + 声调':(APP_MODE==='math'?'模式：100 以内加减法':'模式：英文基础拼读');
+  var desc=APP_MODE==='pinyin'?'看汉字，按顺序选择<b>声母、韵母、声调</b>。答得太慢，怪物会逼近攻击。':
+    (APP_MODE==='math'?'每个怪物随机出一道<b>加法或减法</b>，填写正确数字答案即可通过。答得太慢，怪物会逼近攻击。':'探险家沿着道路前进，遇到随机怪物后拼出单词。答得太慢，怪物会逼近攻击。');
   $('#intro .panel').innerHTML=
     '<div class="ititle">第 '+(i+1)+' 关 · '+L.name+'</div>'+
     '<div class="isub">规则：'+L.tag+' · '+modeLine+' · 本轮随机 '+save.len+' 个</div>'+
     '<div class="rulebox" style="margin-top:calc(var(--u)*.85)">'+L.rule+'</div>'+
     '<div class="wchips">'+chips+'</div>'+
-    '<div class="idesc">'+desc+'<br>先在路线图找到怪物，再进入战斗完成拼读。整关完成后才会出现宝箱，奖励会带到下一关。</div>'+
+    '<div class="idesc">'+desc+'<br>先在路线图找到怪物，再进入战斗'+(APP_MODE==='math'?'完成计算':'完成拼读')+'。整关完成后才会出现宝箱，奖励会带到下一关。</div>'+
     '<div class="btns"><button class="btn green" id="bGo">开始闯关</button>'+
     '<button class="btn ghost" id="bIntroBack">返回</button></div>';
   $('#bGo').onclick=function(){startLevel(i,true);};
@@ -2303,6 +2371,7 @@ function renderRouteMap(moveForward){
   var d=routePathD();
   ['#routePathShadow','#routePath','#routePathDone'].forEach(function(id){var p=$(id);p.setAttribute('d',d);p.setAttribute('pathLength','1');});
   $('#routeLevel').textContent='第 '+(G.li+1)+' 关 · '+LEVELS[G.li].name;
+  $('#routeProgressLabel').textContent=APP_MODE==='math'?'计算进度':'拼读进度';
   $('#routeProgress').textContent=Math.min(G.wi,G.total)+' / '+G.total;
   $('#routeWeaponIcon').textContent=G.weapon?G.weapon.icon:'🪵';
   $('#routeWeaponName').textContent=G.weapon?G.weapon.name:'木剑';
@@ -2335,7 +2404,7 @@ function renderRouteMap(moveForward){
   }else{
     $('#routeCardTitle').textContent=moveForward?'继续前进':'当前遭遇';
     $('#routeCardName').textContent=routeMonsterLabel(G.wi);
-    $('#routeCardSub').textContent=moveForward?'探险家正在沿路线前往下一个怪物。':'准备好后进入战斗，完成一次拼读。';
+    $('#routeCardSub').textContent=moveForward?'探险家正在沿路线前往下一个怪物。':(APP_MODE==='math'?'准备好后进入战斗，完成一道计算。':'准备好后进入战斗，完成一次拼读。');
     button.disabled=!!moveForward;button.textContent=moveForward?'前往下一个怪物…':'进入战斗';
     if(moveForward)routeTO=setTimeout(enterBattle,1900);
   }
@@ -2397,9 +2466,10 @@ function clearBoard(){
 function spawnWord(entry){
   var e=entry||G.words[G.wi];
   G.word=e[0];G.character=APP_MODE==='pinyin'?(e[6]||e[0]):'';G.emoji=e[1];G.gloss=e[2];
+  G.mathExpression=APP_MODE==='math'?(e[6]||e[2]||''):'';
   G.tokens=(e[4]&&e[4].length)?e[4].slice():G.word.toLowerCase().split('');
   G.tokenTypes=(e[5]&&e[5].length)?e[5].slice():G.tokens.map(function(c){return VOWELS.indexOf(c)>=0?'final':'initial';});
-  G.spoken=APP_MODE==='pinyin'?(G.character||G.word):G.word;
+  G.spoken=APP_MODE==='pinyin'?(G.character||G.word):(APP_MODE==='english'?G.word:'');
   G.pos=0;G.posMiss=0;G.locked=true;G.idleT=0;G.threatT=0;G.attacking=false;G.done=false;updateThreat();
   G.letterSpeaking=false;G.pendingFinale=false;G.finaleFn=null;
 
@@ -2418,7 +2488,7 @@ function spawnWord(entry){
   scene.add(m);
   G.monster=m;G.mobKind=kind;
 
-  var n=G.tokens.length,gap=APP_MODE==='pinyin'?1.0:.62;
+  var n=G.tokens.length,gap=APP_MODE==='pinyin'?1.0:(APP_MODE==='math' ? .78 : .62);
   G.wordW=n*gap;
   var wg=new T.Group();
   var banY=Math.max(m.userData.top+.46,2.38);
@@ -2427,7 +2497,7 @@ function spawnWord(entry){
   scene.add(wg);
   G.wordGrp=wg;G.blocks=[];
   for(var i=0;i<n;i++){
-    var ch=G.tokens[i],displayCh=APP_MODE==='pinyin'?'?':ch;
+    var ch=G.tokens[i],displayCh=(APP_MODE==='pinyin'||APP_MODE==='math')?'?':ch;
     var isV=G.tokenTypes[i]==='final'||/[aeiouAEIOU]/.test(ch);
     var bw=String(ch).length>1?.84:.54;
     var bm=new T.Mesh(new T.BoxGeometry(bw,.68,.1),blockMats(displayCh,isV));
@@ -2437,12 +2507,16 @@ function spawnWord(entry){
     bm.userData.idx=i;bm.userData.gone=false;
     wg.add(bm);G.blocks.push(bm);
   }
-  var pic=picCard(APP_MODE==='pinyin'?G.character:G.emoji,G.gloss);
+  var pic=picCard(APP_MODE==='pinyin'?G.character:(APP_MODE==='math'?G.mathExpression+' = ?':G.emoji),G.gloss);
   G.cardOffX=G.cardOffXT=(n*gap)/2+.92;
   pic.position.set(MON_SPAWN_X+G.cardOffX,banY-.14,MON_Z+.08);
   scene.add(pic);
   G.card=pic;
 
+  $('#play').classList.toggle('math-mode',APP_MODE==='math');
+  $('#mathPad').classList.toggle('hide',APP_MODE!=='math');
+  var mathInput=$('#mathAnswer');mathInput.value='';mathInput.classList.remove('wrong');mathInput.disabled=true;
+  if(APP_MODE==='math'){$('#mathInline').textContent=G.mathExpression+' =';mathInput.setAttribute('aria-label','填写 '+G.mathExpression+' 的数字答案');}
   buildSlots();
   dealTiles();
   updateProgress();
@@ -2451,12 +2525,14 @@ function spawnWord(entry){
     setTimeout(function(){
       if(G.scr==='play'&&G.wi===spokenIndex&&G.character===spokenCharacter&&!G.done)ttsSpeak(spokenCharacter,.82);
     },320);
-  }else startSayLoop();
+  }else if(APP_MODE==='english')startSayLoop();
+  else stopSayLoop();
 }
 
 /* ---------------- 槽位与字母 ---------------- */
 function buildSlots(){
   var box=$('#slots');box.innerHTML='';
+  if(APP_MODE==='math'){paintSlots();return;}
   for(var i=0;i<G.tokens.length;i++){
     var d=document.createElement('div');
     d.className='slot'+(String(G.tokens[i]).length>1?' wide':'');
@@ -2466,6 +2542,12 @@ function buildSlots(){
   paintSlots();
 }
 function paintSlots(){
+  if(APP_MODE==='math'){
+    var input=$('#mathAnswer'),submit=$('#bMathSubmit'),disabled=G.locked||G.paused||G.done;
+    input.disabled=disabled;submit.disabled=disabled;
+    if(!disabled)setTimeout(function(){if(G.scr==='play'&&!input.disabled)input.focus();},80);
+    return;
+  }
   var slots=$$('#slots .slot');
   slots.forEach(function(s,i){
     var ch=G.tokens[i],el=s.querySelector('.l');
@@ -2478,6 +2560,9 @@ var CONF={b:'dpq',d:'bpq',p:'bdq',q:'bdp',m:'n',n:'mu',u:'nv',i:'jl',l:'it',a:'o
   c:'eo',g:'qj',t:'fl',s:'zc',f:'ts',h:'nk',r:'nv',w:'mv',y:'vj',v:'uy',z:'sx',k:'hx',j:'gi',x:'zsk'};
 function dealTiles(){
   var pool=[];
+  if(APP_MODE==='math'){
+    G.tiles=[];$('#tray .tiles').innerHTML='';return;
+  }
   if(APP_MODE==='pinyin'){
     G.tokens.forEach(function(c,i){pool.push({c:c,type:G.tokenTypes[i]});});
     var candidates={initial:PINYIN_INITIALS,final:PINYIN_FINALS,tone:[TONE_MARKS[1],TONE_MARKS[2],TONE_MARKS[3],TONE_MARKS[4]]};
@@ -2510,6 +2595,23 @@ function dealTiles(){
 }
 
 /* ---------------- 点击判定 ---------------- */
+function submitMathAnswer(){
+  if(APP_MODE!=='math'||G.locked||G.paused||G.done||G.scr!=='play')return;
+  var input=$('#mathAnswer'),raw=input.value.trim();
+  if(!/^\d{1,3}$/.test(raw)){coach('请填写 0 到 100 之间的数字答案。',2400);input.focus();return;}
+  if(Number(raw)===Number(G.word)){
+    input.value=String(G.word);input.classList.remove('wrong');
+    G.pos=G.tokens.length;G.idleT=0;G.threatT=0;G.posMiss=0;G.locked=true;updateThreat();paintSlots();
+    sfx('right');floater(input,'答对了！','gold');
+    G.tokens.forEach(function(digit,idx){setTimeout(function(){fire(digit,idx);},idx*120);});
+  }else{
+    input.classList.add('wrong');setTimeout(function(){input.classList.remove('wrong');},420);
+    sfx('wrong');G.mistakes++;G.levelMist++;G.posMiss++;G.idleT=0;
+    var flash=$('#flash');flash.classList.add('on');setTimeout(function(){flash.classList.remove('on');},170);
+    coach(G.posMiss>=2?'再检查个位和十位，答案一定在 0 到 100 之间。':'再算一算，这个答案还不对。',2600);
+    input.select();
+  }
+}
 function tapTile(i){
   if(G.locked||G.paused||G.scr!=='play')return;
   var t=G.tiles[i];
@@ -2703,12 +2805,14 @@ function onWordDone(){
   if(G.done)return;
   G.done=true;
   var w=G.word,gl=G.gloss;
-  markQuestionSeen(G.li,[w]);
+  markQuestionSeen(G.li,G.words[G.wi]||[w]);
   sfx('win');
-  toast('good','拼对了！<b style="font-family:var(--num);font-size:1.18em">'+(APP_MODE==='pinyin'?G.character:w)+'</b>'+(APP_MODE==='pinyin'?' = '+w:' = '+gl));
+  var successText=APP_MODE==='math'?'算对了！<b style="font-family:var(--num);font-size:1.18em">'+G.mathExpression+' = '+w+'</b>':
+    '拼对了！<b style="font-family:var(--num);font-size:1.18em">'+(APP_MODE==='pinyin'?G.character:w)+'</b>'+(APP_MODE==='pinyin'?' = '+w:' = '+gl);
+  toast('good',successText);
   killMob();
   var goFinale=function(){
-    if(APP_MODE==='pinyin'){
+    if(APP_MODE==='pinyin'||APP_MODE==='math'){
       stopSayLoop();setTimeout(function(){G.done=false;nextWord();},2000);
     }else{
       saySeq(G.spoken||w,.72,function(){G.done=false;nextWord();});
@@ -2792,12 +2896,12 @@ function finishLevel(){
   var sec=Math.max(1,Math.round((performance.now()-G.startT)/1000));
   var mm=Math.floor(sec/60),ss=('0'+(sec%60)).slice(-2);
   var L=LEVELS[G.li];
-  var chips=G.words.map(function(w){return '<div class="wchip">'+w[1]+'<i>'+w[0]+'</i></div>';}).join('');
+  var chips=G.words.map(function(w){return APP_MODE==='math'?'<div class="wchip">'+w[1]+'<i>'+w[6]+' = '+w[0]+'</i></div>':'<div class="wchip">'+w[1]+'<i>'+w[0]+'</i></div>';}).join('');
   var starSvg='<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.2 6.8.9-4.9 4.7 1.2 6.8L12 17.4 6 20.6l1.2-6.8L2.3 9.1l6.8-.9z" fill="#f2c33f" stroke="#8a6a10" stroke-width="1.6"/></svg>';
   $('#result .panel').innerHTML=
     '<div class="ititle">第 '+(G.li+1)+' 关 · 通关！</div>'+
     '<div class="bigstars">'+starSvg+starSvg+starSvg+'</div>'+
-    '<div class="statrow"><span>'+(APP_MODE==='pinyin'?'读音':'单词')+' <b>'+G.total+'</b></span><span>点错 <b>'+m+'</b> 次</span><span>用时 <b>'+mm+':'+ss+'</b></span></div>'+
+    '<div class="statrow"><span>'+(APP_MODE==='pinyin'?'读音':(APP_MODE==='math'?'算式':'单词'))+' <b>'+G.total+'</b></span><span>点错 <b>'+m+'</b> 次</span><span>用时 <b>'+mm+':'+ss+'</b></span></div>'+
     '<div class="wchips">'+chips+'</div>'+
     '<div class="isub">本关宝箱奖励已在道路上领取</div>'+
     '<div class="btns" id="resultActions">'+
@@ -2818,6 +2922,10 @@ function finishLevel(){
 /* ---------------- 提示 ---------------- */
 var hintTO=null;
 function hintTile(){
+  if(APP_MODE==='math'){
+    if(!G.locked)coach('先看运算符，再从个位开始计算。答案在 0 到 100 之间。',3000);
+    return;
+  }
   if(!G.tiles.length||G.locked)return;
   var need=G.tokens[G.pos];if(!need)return;
   var target=null,i;
@@ -3028,7 +3136,7 @@ function update(dt,t){
     }
     if(G.scr==='play'&&!G.heroMoving&&G.monster&&G.monster.userData.state==='wait'&&G.locked){
       G.monster.userData.arrived=true;G.locked=false;paintSlots();
-      coach('探险家到达战斗点，把 <b>'+(APP_MODE==='pinyin'?G.character:G.word)+'</b> 的'+(APP_MODE==='pinyin'?'拼音':'字母')+'按顺序点出来。',3000);
+      coach(APP_MODE==='math'?'算一算 <b>'+G.mathExpression+'</b>，填写正确的数字答案。':'探险家到达战斗点，把 <b>'+(APP_MODE==='pinyin'?G.character:G.word)+'</b> 的'+(APP_MODE==='pinyin'?'拼音':'字母')+'按顺序点出来。',3000);
     }
     var hd=su.head;
     hd.position.y=1.75+Math.sin(t*1.5)*.016;
@@ -3114,7 +3222,7 @@ function update(dt,t){
           m.position.x=u.targetX;
           if(!u.arrived){
             u.arrived=true;G.locked=false;paintSlots();
-            coach('把 <b>'+G.word+'</b> 的'+(APP_MODE==='pinyin'?'声母、韵母和声调':'字母')+'按顺序点出来。',3000);
+            coach(APP_MODE==='math'?'算一算 <b>'+G.mathExpression+'</b>，填写正确的数字答案。':'把 <b>'+G.word+'</b> 的'+(APP_MODE==='pinyin'?'声母、韵母和声调':'字母')+'按顺序点出来。',3000);
           }
         }
       }
@@ -3261,7 +3369,7 @@ function toggleFull(){
 }
 function chooseMode(mode){
   APP_MODE=mode;G.roundWords=null;applyMode();renderLevels();setScreen('levels');
-  $('#bSay').classList.toggle('hide',mode==='pinyin');sfx('tap');
+  $('#bSay').classList.toggle('hide',mode!=='english');sfx('tap');
 }
 function bind(){
   /* 每组词量设置（关卡选择页） */
@@ -3279,6 +3387,7 @@ function bind(){
   $('#bStart').onclick=function(){setScreen('mode');sfx('tap');};
   $('#bEnglish').onclick=function(){chooseMode('english');};
   $('#bPinyin').onclick=function(){chooseMode('pinyin');};
+  $('#bMath').onclick=function(){chooseMode('math');};
   $('#bModeBack').onclick=function(){setScreen('title');};
   $('#bBackTitle').onclick=function(){setScreen('mode');};
   $('#bEnterBattle').onclick=function(){if(!this.disabled)enterBattle();};
@@ -3286,8 +3395,11 @@ function bind(){
   $('#bHelp').onclick=function(){G.helpBack='title';setScreen('help');};
   $('#bHelpOk').onclick=function(){setScreen(G.helpBack||'title');};
   $('#bTip').onclick=function(){hintTile();sfx('tap');};
+  $('#bMathSubmit').onclick=submitMathAnswer;
+  $('#mathAnswer').oninput=function(){this.value=this.value.replace(/\D/g,'').slice(0,3);};
+  $('#mathAnswer').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();submitMathAnswer();}};
   $('#bSay').onclick=function(){
-    if(!G.word||APP_MODE==='pinyin')return;
+    if(!G.word||APP_MODE!=='english')return;
     say(G.word,.9);
     if(!G.done&&G.scr==='play')setTimeout(function(){if(!G.done&&G.scr==='play')startSayLoop();},2000);
   };

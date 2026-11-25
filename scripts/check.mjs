@@ -46,8 +46,8 @@ if (findings.length) throw new Error(`Sanitization check failed:\n${findings.joi
 if (!template.includes("wai:'ai'") || !template.includes("wei:'ei'")) {
   throw new Error('Pinyin spelling overrides for wai/wei are missing');
 }
-if (!template.includes("APP_MODE==='pinyin'?'?':ch")) {
-  throw new Error('Pinyin questions must hide answer blocks before selection');
+if (!template.includes("(APP_MODE==='pinyin'||APP_MODE==='math')?'?':ch")) {
+  throw new Error('Pinyin and math questions must hide answer blocks before selection');
 }
 if (!template.includes('G.weapon=autoWeapon') || !template.includes('equipWeapon(autoWeapon.id)')) {
   throw new Error('Final chest rewards must auto-equip a newly awarded weapon');
@@ -63,6 +63,15 @@ if (!template.includes("setScreen('route')") || !template.includes('renderRouteM
 }
 if (template.includes('G.wi%5===0')) {
   throw new Error('Intermediate five-question chests must stay disabled');
+}
+if (!template.includes('var LEVELS_MATH=makeMathLevels()') || !template.includes("$('#bMath').onclick")) {
+  throw new Error('Math mode and its mode selector must be present');
+}
+if (!template.includes("if(op==='+'){b=ri(0,max-a);answer=a+b;}") || !template.includes('else{b=ri(0,a);answer=a-b;}')) {
+  throw new Error('Math questions must stay within the configured maximum and avoid negative subtraction results');
+}
+if (!template.includes('function submitMathAnswer()') || !template.includes("Number(raw)===Number(G.word)")) {
+  throw new Error('Math answer submission is missing');
 }
 
 console.log(`Checks passed: ${scripts.length} scripts, ${chart.length} pinyin entries, no banned identifiers`);
