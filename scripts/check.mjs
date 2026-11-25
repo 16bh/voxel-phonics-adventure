@@ -73,5 +73,8 @@ if (!template.includes("if(op==='+'){b=ri(0,max-a);answer=a+b;}") || !template.i
 if (!template.includes('function submitMathAnswer()') || !template.includes("Number(raw)===Number(G.word)")) {
   throw new Error('Math answer submission is missing');
 }
+if (!template.includes('id="mathKeys"') || !template.includes('data-digit="0"') || !template.includes('data-digit="9"') || !template.includes('function useMathKey(button)')) {
+  throw new Error('The on-screen math keypad must include digits 0 through 9');
+}
 
 console.log(`Checks passed: ${scripts.length} scripts, ${chart.length} pinyin entries, no banned identifiers`);
